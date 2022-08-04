@@ -1,9 +1,10 @@
 using Godot;
 using System;
-using Fractural.Utils;
+using MonoCustomResourceRegistry;
 
 namespace Fractural.DependencyInjection
 {
+	[RegisteredType(nameof(Dependency), "addons/FracturalInject/assets/dependency.svg")]
 	[Tool]
 	public class Dependency : Node
 	{

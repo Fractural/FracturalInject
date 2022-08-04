@@ -1,5 +1,5 @@
 tool
-class_name Dependency, "res://addons/FracturalVNE/assets/icons/dependency.svg"
+class_name Dependency, "res://addons/FracturalInject/assets/dependency.svg"
 extends Node
 # A node that represents an external node dependency of a scene
 
@@ -19,7 +19,7 @@ var dependency
 
 
 func _ready() -> void:
-	if FracVNE.Utils.is_in_editor_scene_tab(self):
+	if FracInject.Utils.is_in_editor_scene_tab(self):
 		return
 	
 	if dependency != null:

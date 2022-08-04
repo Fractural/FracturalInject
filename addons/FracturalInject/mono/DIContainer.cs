@@ -7,6 +7,8 @@ namespace Fractural.DependencyInjection
 {
 	public class DIContainer : Node
 	{
+		public static DIContainer Instance { get; private set; }
+
 		[Signal]
 		public delegate void Readied();
 		
@@ -14,27 +16,25 @@ namespace Fractural.DependencyInjection
 		public bool IsSelfContained { get; set; }
 		public List<Godot.Object> GDScriptServices;
 		public List<object> CSharpServices;
-		public SceneManager SceneManager;
 
-		[Export]
-		private NodePath sceneManagerPath;
 		[Export]
 		private NodePath dependenciesHolderPath;
 
-		public override async void _Ready()
+		public override void _Ready()
 		{
-			SceneManager = GetNode<SceneManager>(sceneManagerPath);
+			if (Instance != null)
+			{
+				QueueFree();
+				return;
+			}
+			Instance = this;
 
-			await ToSignal(GetTree(), "idle_frame");
-			
 			if (!IsSelfContained)
 			{
 				Node root = GetTree().Root;
 				GetParent().RemoveChild(this);
 				root.AddChild(this);
 			}
-
-			SceneManager.GotoInitialScene();
 		}
 
 		public void AddDependency(Godot.Object dependency)
@@ -79,13 +79,13 @@ namespace Fractural.DependencyInjection
 				if (GDScriptUtils.IsType(injectableDependency, requester.DependencyName))
 				{
 					requester.DependencyObject = injectableDependency;
-					break;
+					return;
 				}
 			foreach (object injectableDependency in CSharpServices)
 				if (injectableDependency.GetType().FullName == requester.DependencyName)
 				{
 					requester.CSharpDependencyObject = injectableDependency;
-					break;
+					return;
 				}
 		}
 	}

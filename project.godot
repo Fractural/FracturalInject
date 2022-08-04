@@ -12,11 +12,23 @@ _global_script_classes=[ {
 "base": "Reference",
 "class": "Dependency",
 "language": "GDScript",
-"path": "res://dependency_injection/dependency.gd"
+"path": "res://addons/FracturalInject/gdscript/dependency.gd"
+}, {
+"base": "Reference",
+"class": "FracInject",
+"language": "GDScript",
+"path": "res://addons/FracturalInject/gdscript/namespace.gd"
 } ]
 _global_script_class_icons={
-"Dependency": ""
+"Dependency": "",
+"FracInject": ""
 }
+
+[MonoCustomResourceRegistry]
+
+ClassPrefix=""
+SearchType=0
+ResourceScriptDirectories=[ "res://" ]
 
 [application]
 
@@ -24,6 +36,10 @@ config/name="FracturalInject"
 boot_splash/image="res://bootsplash.png"
 boot_splash/bg_color=Color( 0, 0, 0, 1 )
 config/icon="res://icon.png"
+
+[editor_plugins]
+
+enabled=PoolStringArray( "res://addons/FracturalCommons/plugin.cfg", "res://addons/MonoCustomResourceRegistry/plugin.cfg" )
 
 [physics]
 

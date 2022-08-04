@@ -71,7 +71,7 @@ func _on_scene_loaded(loaded_scene):
 	for requester in dependency_requesters:
 		# Let each injectable_service try to inject a dependency
 		for injectable_service in services:
-			if FracVNE.Utils.is_type(injectable_service, requester.dependency_name):
+			if FracInject.Utils.is_type(injectable_service, requester.dependency_name):
 				_inject_dependency(requester, injectable_service)
 				break
 
