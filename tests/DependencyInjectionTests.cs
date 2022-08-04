@@ -5,7 +5,7 @@ namespace Tests
 		[Test]
 		public void Empty()
 		{
-
+			Assert.IsTrue(true);
 		}
 	}
 }
