@@ -21,7 +21,7 @@ jobs:
         env:
           REPO: self
           BRANCH: release
-          FOLDER: addons/FracturalCommons
+          FOLDER: addons/FracturalInject
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Create Release
