@@ -1,6 +1,5 @@
+using Fractural.CSharpResourceRegistry;
 using Godot;
-using MonoCustomResourceRegistry;
-using System;
 
 namespace Fractural
 {
