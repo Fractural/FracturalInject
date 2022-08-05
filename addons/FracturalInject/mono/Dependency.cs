@@ -1,6 +1,5 @@
+using Fractural.CSharpResourceRegistry;
 using Godot;
-using System;
-using MonoCustomResourceRegistry;
 
 namespace Fractural.DependencyInjection
 {
@@ -10,7 +9,7 @@ namespace Fractural.DependencyInjection
 	{
 		[Export]
 		private Resource classTypeRes;
-		public IClassTypeRes ClassTypeRes => (IClassTypeRes) classTypeRes;
+		public IClassTypeRes ClassTypeRes => (IClassTypeRes)classTypeRes;
 		[Export]
 		public NodePath DependencyPath { get; set; }
 
