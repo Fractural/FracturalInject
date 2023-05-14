@@ -10,28 +10,50 @@ namespace Fractural.DependencyInjection
 {
     [Tool]
     [CSharpScript]
-    public class ClassTypeSelector : EditorProperty
+    public class ClassTypeEditorProperty : EditorProperty
     {
         private PopupSearch _popupSearch;
         private Button _selectButton;
+        private Button _clearButton;
         private ClassTypeInspectorPlugin _inspectorPlugin;
 
-        public ClassTypeSelector() { }
-        public ClassTypeSelector(ClassTypeInspectorPlugin inspectorPlugin)
+        public ClassTypeEditorProperty() { }
+        public ClassTypeEditorProperty(ClassTypeInspectorPlugin inspectorPlugin)
         {
             _inspectorPlugin = inspectorPlugin;
-        }
 
-        public override void _Ready()
-        {
-            // TODO: Create class type file and add it to this
             _popupSearch = new PopupSearch();
             _popupSearch.Connect(nameof(PopupSearch.EntrySelected), this, nameof(OnTypeFullNameSelected));
 
             _selectButton = new Button();
             _selectButton.Connect("pressed", this, nameof(OnSelectButtonPressed));
-            AddChild(_selectButton);
+            _selectButton.ClipText = true;
+            _selectButton.SizeFlagsHorizontal = (int)SizeFlags.ExpandFill;
+
+            _clearButton = new Button();
+            _clearButton.Connect("pressed", this, nameof(OnClearButtonPressed));
+
+            var hbox = new HBoxContainer();
+            hbox.AddChild(_selectButton);
+            hbox.AddChild(_clearButton);
+
+            AddChild(hbox);
             AddChild(_popupSearch);
+        }
+
+        public override void _Ready()
+        {
+            _clearButton.Icon = GetIcon("Clear", "EditorIcons");
+        }
+
+        public override void UpdateProperty()
+        {
+            _selectButton.Text = GetEditedObject().Get<IClassTypeRes>(GetEditedProperty())?.ClassType?.FullName ?? "[empty]";
+        }
+
+        private void OnClearButtonPressed()
+        {
+            EmitChanged(GetEditedProperty(), null);
         }
 
         private void OnSelectButtonPressed()
@@ -44,13 +66,10 @@ namespace Fractural.DependencyInjection
         {
             if (_inspectorPlugin.ClassTypeResourcesDict.TryGetValue(typeFullName, out IClassTypeRes selectedResource))
             {
-                GD.Print($"{typeFullName} exists");
-                _selectButton.Text = typeFullName;
                 EmitChanged(GetEditedProperty(), selectedResource);
             }
             else
             {
-                GD.Print($"{typeFullName} doesn't exist");
                 // Selected resource doesn't exist yet, so we have to create it.
                 _inspectorPlugin.RequestCreateClassTypeResource(_inspectorPlugin.NodeClassTypesDict[typeFullName], (res) =>
                 {
@@ -60,11 +79,6 @@ namespace Fractural.DependencyInjection
                     EditorUtils.BuildCSharpSolution();
                 });
             }
-        }
-
-        public override void UpdateProperty()
-        {
-            _selectButton.Text = GetEditedObject().Get<IClassTypeRes>(GetEditedProperty())?.ClassType?.FullName ?? "-- EMPTY --";
         }
     }
 }

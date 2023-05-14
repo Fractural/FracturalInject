@@ -31,17 +31,11 @@ Main/GenerateVersionPreprocessorDefines=false
 "C# Resource Registry/SearchType"=0
 "C# Resource Registry/ResourceScriptDirectories"=[ "res://" ]
 
-[MonoCustomResourceRegistry]
-
-ClassPrefix=""
-SearchType=0
-ResourceScriptDirectories=[ "res://" ]
-
 [WAT]
 
-Test_Directory="res://tests"
-Results_Directory="res://tests"
-Test_Metadata_Directory="res://tests"
+Test_Directory="res://Tests"
+Results_Directory="res://Tests"
+Test_Metadata_Directory="res://Tests"
 Tags=PoolStringArray(  )
 Cache_Tests=true
 Window_Size=Vector2( 1280, 720 )
@@ -52,13 +46,14 @@ Display=8
 [application]
 
 config/name="FracturalInject"
+run/main_scene="res://addons/WAT/gui.tscn"
 boot_splash/image="res://bootsplash.png"
 boot_splash/bg_color=Color( 0, 0, 0, 1 )
 config/icon="res://icon.png"
 
 [editor_plugins]
 
-enabled=PoolStringArray( "res://addons/FracturalCommons/plugin.cfg", "res://addons/FracturalInject/plugin.cfg", "res://addons/WAT/plugin.cfg" )
+enabled=PoolStringArray( "res://addons/FracturalCommons/plugin.cfg", "res://addons/FracturalInject/plugin.cfg", "res://addons/WAT/plugin.cfg", "res://addons/editor_icon_previewer/plugin.cfg" )
 
 [mono]
 

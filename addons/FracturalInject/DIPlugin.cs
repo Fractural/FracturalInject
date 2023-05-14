@@ -12,7 +12,7 @@ namespace Fractural.DependencyInjection
         protected override void Load()
         {
             AddManagedInspectorPlugin(new ClassTypeInspectorPlugin(this));
-            AddManagedInspectorPlugin(new DependencyInspectorPlugin());
+            AddManagedInspectorPlugin(new DependencyPathInspectorPlugin(this));
         }
     }
 }

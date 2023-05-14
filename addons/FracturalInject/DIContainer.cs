@@ -5,29 +5,28 @@ using Fractural.Utils;
 
 namespace Fractural.DependencyInjection
 {
+    /// <summary>
+    /// Holds a mapping for dependencies.
+    /// </summary>
     public class DIContainer : Node
     {
-        public static DIContainer Instance { get; private set; }
+        public static DIContainer Global { get; private set; }
 
         [Signal]
         public delegate void Readied();
 
         [Export]
         public bool IsSelfContained { get; set; }
-        public List<Godot.Object> GDScriptServices;
-        public List<object> CSharpServices;
-
-        [Export]
-        private NodePath dependenciesHolderPath;
+        public Dictionary<Type, object> DependencyMapping { get; set; } = new Dictionary<Type, object>();
 
         public override void _Ready()
         {
-            if (Instance != null)
+            if (Global != null)
             {
                 QueueFree();
                 return;
             }
-            Instance = this;
+            Global = this;
 
             if (!IsSelfContained)
             {
@@ -37,51 +36,34 @@ namespace Fractural.DependencyInjection
             }
         }
 
-        public void AddDependency(Godot.Object dependency)
+        public void ResolveDependencyNode(Dependency dependency)
         {
-            // Supports both GDScript and CSharp wrappers.
-            if (dependency.GetScript() is GDScript)
-            {
-                GDScriptServices.Add(dependency);
-                if (GDUtils.IsType(dependency, "CSharpWrapper"))
-                    CSharpServices.Add(dependency.Get("source"));
-            }
-            else if (dependency.GetScript() is CSharpScript)
-            {
-                CSharpServices.Add(dependency);
-                if (dependency is GDScriptWrapper)
-                    GDScriptServices.Add((dependency as GDScriptWrapper).Source);
-            }
+            if (DependencyMapping.TryGetValue(dependency.ClassTypeRes.ClassType, out object value))
+                dependency.DependencyValue = (Node)value;
         }
 
-        public bool HasDependency(Godot.Object otherDependency)
+        public void AddDependency<T>(T dependency)
         {
-            foreach (Godot.Object dependency in GDScriptServices)
-                if (dependency.GetType() == otherDependency.GetType())
-                    return true;
-            return false;
+            if (HasDependency<T>())
+                RemoveDependency<T>();
+            DependencyMapping.Add(typeof(T), dependency);
         }
 
-        private void OnSceneLoaded(Node loadedScene)
+        public bool HasDependency<T>()
         {
-            if (!loadedScene.HasNode("Dependencies"))
-                return;
-
-            var dependenciesHolder = loadedScene.GetNode("Dependencies");
-            var dependencyRequesters = dependenciesHolder.GetChildren();
-
-            foreach (Node requester in dependencyRequesters)
-                TryInjectDependencies(new DependencyWrapper(requester));
+            return DependencyMapping.ContainsKey(typeof(T));
         }
 
-        private void TryInjectDependencies(DependencyWrapper requester)
+        public void RemoveDependency<T>()
         {
-            foreach (Godot.Object injectableDependency in GDScriptServices)
-                if (GDUtils.IsType(injectableDependency, requester.DependencyName))
-                {
-                    requester.DependencyObject = injectableDependency;
-                    return;
-                }
+            DependencyMapping.Remove(typeof(T));
+        }
+
+        public T GetDependency<T>()
+        {
+            if (DependencyMapping.TryGetValue(typeof(T), out object result))
+                return (T)result;
+            return default;
         }
     }
 }

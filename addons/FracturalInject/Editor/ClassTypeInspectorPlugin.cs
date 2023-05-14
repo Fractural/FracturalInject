@@ -3,6 +3,7 @@ using Fractural.Utils;
 using Godot;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 #if TOOLS
 namespace Fractural.DependencyInjection
@@ -34,6 +35,8 @@ namespace Fractural.DependencyInjection
         {
             _plugin.GetEditorInterface().GetResourceFilesystem().Disconnect("filesystem_changed", this, nameof(UpdateResources));
             _confirmCreateClassTypeResourceDialog.QueueFree();
+            ClassTypeResourcesDict.Clear();
+            NodeClassTypesDict.Clear();
         }
 
         public override bool CanHandle(Godot.Object @object)
@@ -43,9 +46,9 @@ namespace Fractural.DependencyInjection
 
         public override bool ParseProperty(Godot.Object @object, int type, string path, int hint, string hintText, int usage)
         {
-            if (hintText == nameof(Resource) && path.ToLower().EndsWith("classtyperes"))
+            if (hintText.Split(",").Any(x => x == HintString.ClassType))
             {
-                AddPropertyEditor(path, new ClassTypeSelector(this));
+                AddPropertyEditor(path, new ClassTypeEditorProperty(this));
                 return true;
             }
             return false;
@@ -117,13 +120,14 @@ namespace Fractural.DependencyInjection
                     ClassTypeResourcesDict.Add(res.ClassType.FullName, res);
             }
             NodeClassTypesDict.Clear();
-            var cSharpFiles = FileUtils.GetDirFiles("res://", true, new[] { "cs" });
-            foreach (var filePath in cSharpFiles)
-            {
-                var type = EditorUtils.GetCSharpType(filePath);
-                if (type != null && type.IsSubclassOf(typeof(Node)))
-                    NodeClassTypesDict.Add(type.FullName, type);
-            }
+            // LINQ query using reflection to fetch subclasses of Node
+            var subclasses =
+                from assembly in AppDomain.CurrentDomain.GetAssemblies()
+                from type in assembly.GetTypes()
+                where type == typeof(Node) || type.IsSubclassOf(typeof(Node)) && !type.IsAbstract
+                select type;
+            foreach (var type in subclasses)
+                NodeClassTypesDict.Add(type.FullName, type);
         }
     }
 }
