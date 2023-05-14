@@ -2,7 +2,7 @@
 	path = addons/FracturalCommons
 	url = https://github.com/Fractural/FracturalCommons.git
 	branch = release
-[submodule "addons/FracturalCSharpResourceRegistry"]
-	path = addons/FracturalCSharpResourceRegistry
-	url = https://github.com/Fractural/FracturalCSharpResourceRegistry.git
+[submodule "addons/FracturalSceneManagement"]
+	path = addons/FracturalSceneManagement
+	url = https://github.com/Fractural/FracturalSceneManagement
 	branch = release

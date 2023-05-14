@@ -1,11 +1,14 @@
-[gd_scene load_steps=3 format=2]
+[gd_scene load_steps=4 format=2]
 
-[ext_resource path="res://addons/FracturalInject/mono/Dependency.cs" type="Script" id=1]
-[ext_resource path="res://tests/Manual/NodeClassType.tres" type="Resource" id=2]
+[ext_resource path="res://addons/FracturalInject/Dependency.cs" type="Script" id=1]
+[ext_resource path="res://ClassTypes/Fractural_Plugin_SearchEditClassTypeRes.cs" type="Script" id=2]
+
+[sub_resource type="Resource" id=1]
+script = ExtResource( 2 )
 
 [node name="Node2D" type="Node2D"]
 
 [node name="Dependency" type="Node" parent="."]
 script = ExtResource( 1 )
 DependencyPath = NodePath("")
-classTypeRes = ExtResource( 2 )
+_classTypeRes = SubResource( 1 )

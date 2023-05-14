@@ -9,16 +9,6 @@
 config_version=4
 
 _global_script_classes=[ {
-"base": "Node",
-"class": "Dependency",
-"language": "GDScript",
-"path": "res://addons/FracturalInject/gdscript/dependency.gd"
-}, {
-"base": "Reference",
-"class": "FracInject",
-"language": "GDScript",
-"path": "res://addons/FracturalInject/gdscript/namespace.gd"
-}, {
 "base": "Reference",
 "class": "WAT",
 "language": "GDScript",
@@ -30,11 +20,16 @@ _global_script_classes=[ {
 "path": "res://addons/WAT/test/test.gd"
 } ]
 _global_script_class_icons={
-"Dependency": "res://addons/FracturalInject/assets/dependency.svg",
-"FracInject": "",
 "WAT": "",
 "WATTest": ""
 }
+
+[FracturalCommons]
+
+Main/GenerateVersionPreprocessorDefines=false
+"C# Resource Registry/ClassPrefix"=""
+"C# Resource Registry/SearchType"=0
+"C# Resource Registry/ResourceScriptDirectories"=[ "res://" ]
 
 [MonoCustomResourceRegistry]
 
@@ -63,7 +58,11 @@ config/icon="res://icon.png"
 
 [editor_plugins]
 
-enabled=PoolStringArray( "res://addons/FracturalCommons/plugin.cfg", "res://addons/WAT/plugin.cfg" )
+enabled=PoolStringArray( "res://addons/FracturalCommons/plugin.cfg", "res://addons/FracturalInject/plugin.cfg", "res://addons/WAT/plugin.cfg" )
+
+[mono]
+
+project/assembly_name="FracturalInject"
 
 [physics]
 
