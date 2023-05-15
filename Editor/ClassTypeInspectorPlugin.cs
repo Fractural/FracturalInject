@@ -111,6 +111,9 @@ namespace Fractural.DependencyInjection
 
         private void UpdateResources()
         {
+            var dir = new Directory();
+            if (!dir.DirExists(ClassTypesDirectory))
+                dir.MakeDir(ClassTypesDirectory);
             var files = FileUtils.GetDirFiles(ClassTypesDirectory, true, new[] { "tres" });
             ClassTypeResourcesDict.Clear();
             foreach (var filePath in files)
