@@ -16,11 +16,8 @@ namespace Fractural.DependencyInjection
         public override void _Ready()
         {
             DIContainer = GetNode<DIContainer>(_diContainerPath);
-            foreach (NodePath path in GetChildren())
-            {
-                var node = GetNode(path);
+            foreach (Node node in GetChildren())
                 DIContainer.Bind(node.GetType()).ToSingle(node);
-            }
         }
     }
 }
