@@ -89,7 +89,7 @@ namespace Fractural.DependencyInjection
         public Dictionary<Type, object> DependencyMapping { get; set; } = new Dictionary<Type, object>();
         public DIContainer ParentContainer { get; set; }
 
-        public override void _Ready()
+        public override async void _Ready()
         {
             if (Global != null)
             {
@@ -98,15 +98,16 @@ namespace Fractural.DependencyInjection
             }
             Global = this;
 
-            if (!IsSelfContained)
-            {
-                Node root = GetTree().Root;
-                GetParent().RemoveChild(this);
-                root.AddChild(this);
-            }
-
             // Add DIContainer itself as dependency so it can be injected
             Bind<DIContainer>().ToSingle(this);
+
+            if (!IsSelfContained)
+            {
+                await ToSignal(GetTree(), "idle_frame");
+
+                Node root = GetTree().Root;
+                this.Reparent(root);
+            }
         }
 
         public T InstantiatePrefab<T>(PackedScene prefab) where T : Node
