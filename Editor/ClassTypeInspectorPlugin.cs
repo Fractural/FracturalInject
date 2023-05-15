@@ -113,7 +113,7 @@ namespace Fractural.DependencyInjection
         {
             var dir = new Directory();
             if (!dir.DirExists(ClassTypesDirectory))
-                dir.MakeDir(ClassTypesDirectory);
+                dir.MakeDirRecursive(ClassTypesDirectory);
             var files = FileUtils.GetDirFiles(ClassTypesDirectory, true, new[] { "tres" });
             ClassTypeResourcesDict.Clear();
             foreach (var filePath in files)
