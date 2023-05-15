@@ -22,7 +22,10 @@ namespace Fractural.DependencyInjection
         {
             DIContainer = GetNode<DIContainer>(_diContainerPath);
             foreach (NodePath path in _servicePaths)
-                DIContainer.AddDependency(GetNode(path));
+            {
+                var node = GetNode(path);
+                DIContainer.Bind(node.GetType()).ToSingle(node);
+            }
         }
     }
 }

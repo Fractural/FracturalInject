@@ -1,0 +1,19 @@
+[gd_scene load_steps=4 format=2]
+
+[ext_resource path="res://addons/FracturalInject/Dependency.cs" type="Script" id=1]
+[ext_resource path="res://ClassTypes/Tests_CustomNodeTypeAClassTypeRes.cs" type="Script" id=3]
+
+[sub_resource type="Resource" id=1]
+script = ExtResource( 3 )
+
+[node name="TestCyclicalNodeDependency" type="Node"]
+
+[node name="Dependency" type="Node" parent="."]
+script = ExtResource( 1 )
+ClassType = SubResource( 1 )
+DependencyPath = NodePath("../Dependency2")
+
+[node name="Dependency2" type="Node" parent="."]
+script = ExtResource( 1 )
+ClassType = SubResource( 1 )
+DependencyPath = NodePath("../Dependency")

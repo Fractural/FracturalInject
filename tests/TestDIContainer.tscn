@@ -1,0 +1,26 @@
+[gd_scene load_steps=6 format=2]
+
+[ext_resource path="res://addons/FracturalInject/Dependency.cs" type="Script" id=1]
+[ext_resource path="res://Tests/CustomTypes/CustomNodeTypeA.cs" type="Script" id=2]
+[ext_resource path="res://ClassTypes/Tests_CustomNodeTypeAClassTypeRes.cs" type="Script" id=3]
+[ext_resource path="res://addons/FracturalInject/DIContainer.cs" type="Script" id=4]
+
+[sub_resource type="Resource" id=1]
+script = ExtResource( 3 )
+
+[node name="TestSingleChainNodeDependency" type="Node"]
+
+[node name="DIContainer2" type="Node" parent="."]
+script = ExtResource( 4 )
+
+[node name="Dependency" type="Node" parent="."]
+script = ExtResource( 1 )
+ClassType = SubResource( 1 )
+DependencyPath = NodePath("../Value")
+
+[node name="Value" type="Node" parent="."]
+script = ExtResource( 2 )
+Number = 50
+SomeText = "sdfsdf"
+
+[node name="DIContainer" type="Node" parent="."]
