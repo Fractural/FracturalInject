@@ -5,7 +5,7 @@ using Godot.Collections;
 
 namespace Fractural.DependencyInjection
 {
-    [RegisteredType(nameof(Dependency), "addons/FracturalInject/assets/dependency.svg")]
+    [RegisteredType(nameof(Dependency), "addons/FracturalInject/Assets/dependency.svg")]
     [Tool]
     public class Dependency : Node
     {
@@ -23,21 +23,32 @@ namespace Fractural.DependencyInjection
         public NodePath DependencyPath { get; set; }
 
         // Lazy-load DependencyValue
-        private Node _dependencyValue;
-        public Node DependencyValue
+        private bool isLazyLoading = false;
+        private object _dependencyValue;
+        public object DependencyValue
         {
             get
             {
-                if (_dependencyValue == null)
+                if (_dependencyValue == null && IsInsideTree())
                 {
+                    if (isLazyLoading)
+                    {
+                        // If this dependency was already lazy loading, then we hit a cyclical dependency!
+                        GD.PushError($"{nameof(Dependency)}: Dependency at \"{GetPath()}\" is a cyclical dependency, but dependencies cannot be cyclical!");
+                        return null;
+                    }
+                    isLazyLoading = true;
                     // We attempt to fetch the dependency from the saved DependencyPath if _dependencyValue has not already been injected by the DIContainer.
-                    var valueNode = GetNode(DependencyPath);
+                    var valueNode = GetNodeOrNull(DependencyPath);
                     if (valueNode == null)
-                        GD.PushError($"{nameof(Dependency)}: Dependency at \"GetPath()\" could not get node at path \"{DependencyPath}\"");
+                        GD.PushWarning($"{nameof(Dependency)}: Dependency at \"{GetPath()}\" could not get node at path \"{DependencyPath}\"");
                     else if (valueNode is Dependency dependency)
                         _dependencyValue = dependency.DependencyValue;
-                    else if (valueNode.GetType() != ClassTypeRes.ClassType)
-                        GD.PushError($"{nameof(Dependency)}: Dependency at \"{GetPath()}\" has class type {ClassTypeRes.ClassType.FullName} but actual DependencyPath type was {DependencyValue.GetType()}");
+                    else if (valueNode.GetType() == ClassTypeRes.ClassType)
+                        _dependencyValue = valueNode;
+                    else
+                        GD.PushError($"{nameof(Dependency)}: Dependency at \"{GetPath()}\" has class type {ClassTypeRes.ClassType.FullName} but actual DependencyPath type was {valueNode.GetType().FullName}");
+                    isLazyLoading = false;
                 }
                 return _dependencyValue;
             }
