@@ -38,7 +38,7 @@ func _recursive_update(testdir: TestDirectory) -> void:
 	var dir: Directory = Directory.new()
 	var err: int = dir.open(testdir.path)
 	if err != OK:
-		push_warning("WAT: Could not update filesystem, code: " + str(err));
+		push_warning("WAT: Could not update filesystem, code: " + str(err) + " path: " + str(testdir.path));
 		return
 	
 	var subdirs: Array = []
