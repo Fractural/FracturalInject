@@ -2,6 +2,9 @@ name: 🧪 Run Unit Tests
 
 on: [push, pull_request]
 
+env:
+  IMPORT_TIME: 10s
+
 jobs:
   Tests:
     name: Run All Tests on 3.5.1
@@ -14,13 +17,6 @@ jobs:
       - name: Update Submodules
         run: git submodule update --init
 
-      - name: Remove Stub Project
-        uses: jacobtomlinson/gha-find-replace@v3
-        with:
-          find: "(\r\n|\r|\n)Project(.*?)\"StubProject\"(.*?)(\r\n|\r|\n)EndProject"
-          replace: " "
-          regex: true
-
       - name: Install Dependencies
         run: |
           nuget restore
@@ -29,6 +25,9 @@ jobs:
 
       - name: Compile
         run: msbuild
+
+      - name: Reimport Assets
+        run: timeout $IMPORT_TIME godot --editor || code=$?; if [[ $code -ne 124 && $code -ne 0 ]]; then exit $code; fi
 
       - name: Run
         run: godot addons/WAT/cli.tscn run=all
