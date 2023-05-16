@@ -37,4 +37,4 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: Test Results
-          path: Tests/results.xml
+          path: tests/results.xml

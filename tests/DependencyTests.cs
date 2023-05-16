@@ -17,8 +17,8 @@ namespace Tests
             var instance = scene.Instance();
             AddChild(instance);
 
-            var value = (CustomNodeTypeA)FindNode("Value", owned: false);
-            var dependency = (Dependency)FindNode("Dependency", owned: false);
+            var value = (CustomNodeTypeA)instance.FindNode("Value", owned: false);
+            var dependency = (Dependency)instance.FindNode("Dependency", owned: false);
 
             Assert.IsNotNull(dependency.DependencyValue, "Then value should not be null");
             Assert.IsEqual(dependency.DependencyValue, value, "Then value should be correct");
@@ -37,8 +37,8 @@ namespace Tests
             var instance = scene.Instance();
             AddChild(instance);
 
-            var value = (CustomNodeTypeA)FindNode("Value", owned: false);
-            var dependency = (Dependency)FindNode("Dependency", owned: false);
+            var value = (CustomNodeTypeA)instance.FindNode("Value", owned: false);
+            var dependency = (Dependency)instance.FindNode("Dependency", owned: false);
 
             Assert.IsNotNull(dependency.DependencyValue, "Then value should not be null");
             Assert.IsEqual(dependency.DependencyValue, value, "Then value should be correct");
@@ -58,7 +58,7 @@ namespace Tests
             var instance = scene.Instance();
             AddChild(instance);
 
-            var dependency = (Dependency)FindNode("Dependency", owned: false);
+            var dependency = (Dependency)instance.FindNode("Dependency", owned: false);
 
             Assert.IsNull(dependency.DependencyValue, "Then value should be null since cyclical dependencies are not allowed");
 
