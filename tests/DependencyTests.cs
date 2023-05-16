@@ -1,7 +1,6 @@
 using WAT;
 using Fractural.DependencyInjection;
 using Godot;
-using Fractural.Utils;
 
 namespace Tests
 {
@@ -14,7 +13,7 @@ namespace Tests
         public void TestSingleChainNodeDependency()
         {
             Describe("When fetching single chain dependency");
-            var scene = ResourceLoader.Load<PackedScene>("res://Tests/TestSingleChainNodeDependency.tscn");
+            var scene = ResourceLoader.Load<PackedScene>("res://tests/TestSingleChainNodeDependency.tscn");
             var instance = scene.Instance();
             AddChild(instance);
 
@@ -34,7 +33,7 @@ namespace Tests
         public void TestDoubleChainNodeDependency()
         {
             Describe("When fetching double chain dependency");
-            var scene = ResourceLoader.Load<PackedScene>("res://Tests/TestDoubleChainNodeDependency.tscn");
+            var scene = ResourceLoader.Load<PackedScene>("res://tests/TestDoubleChainNodeDependency.tscn");
             var instance = scene.Instance();
             AddChild(instance);
 
@@ -55,7 +54,7 @@ namespace Tests
         {
             Describe("When fetching cyclical dependencies");
 
-            var scene = ResourceLoader.Load<PackedScene>("res://Tests/TestCyclicalNodeDependency.tscn");
+            var scene = ResourceLoader.Load<PackedScene>("res://tests/TestCyclicalNodeDependency.tscn");
             var instance = scene.Instance();
             AddChild(instance);
 

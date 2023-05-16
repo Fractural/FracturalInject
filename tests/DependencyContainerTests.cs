@@ -40,7 +40,7 @@ namespace Tests
             diContainer.Bind<CustomNodeTypeA>().ToSingle(instanceA);
             diContainer.Bind<CustomNodeTypeB>().ToSingle(instanceB);
 
-            var prefab = ResourceLoader.Load<PackedScene>("res://Tests/TestDependencyNodesInjection.tscn");
+            var prefab = ResourceLoader.Load<PackedScene>("res://tests/TestDependencyNodesInjection.tscn");
             var instance = diContainer.InstantiatePrefab<Node>(prefab);
             AddChild(instance);
 
@@ -67,7 +67,7 @@ namespace Tests
             diContainer.Bind<CustomNodeTypeA>().ToSingle(instanceA);
             diContainer.Bind<CustomNodeTypeB>().ToSingle(instanceB);
 
-            var prefab = ResourceLoader.Load<PackedScene>("res://Tests/TestDependencyNodesInjection.tscn");
+            var prefab = ResourceLoader.Load<PackedScene>("res://tests/TestDependencyNodesInjection.tscn");
             var instance = prefab.Instance();
             AddChild(instance);
 
