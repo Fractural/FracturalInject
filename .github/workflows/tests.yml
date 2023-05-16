@@ -10,8 +10,9 @@ jobs:
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v3
-        with:
-          submodules: recursive
+
+      - name: Update Submodules
+        run: git submodule update --init
 
       - name: Remove Stub Project
         uses: jacobtomlinson/gha-find-replace@v3
