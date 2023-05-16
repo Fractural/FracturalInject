@@ -20,9 +20,11 @@ namespace Fractural.DependencyInjection
         public static Dependency[] GetNodeDependencies(this Node node)
         {
             var dependencies = new List<Dependency>();
-            foreach (Node child in node.GetNodeDependencyHolder().GetChildren())
-                if (child is Dependency dependency)
-                    dependencies.Add(dependency);
+            var dependenciesHolder = node.GetNodeDependencyHolder();
+            if (dependenciesHolder != null)
+                foreach (Node child in dependenciesHolder.GetChildren())
+                    if (child is Dependency dependency)
+                        dependencies.Add(dependency);
             return dependencies.ToArray();
         }
     }
