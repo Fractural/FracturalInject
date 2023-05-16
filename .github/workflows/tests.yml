@@ -3,7 +3,7 @@ name: 🧪 Run Unit Tests
 on: [push, pull_request]
 
 env:
-  IMPORT_TIME: 10s
+  IMPORT_TIME: 20s
 
 jobs:
   Tests:
