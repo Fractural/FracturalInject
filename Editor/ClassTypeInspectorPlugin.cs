@@ -93,7 +93,11 @@ namespace Fractural.DependencyInjection
     public class {resourceScriptClassName} : ClassTypeRes<{type.FullName}> {{ }}
 }}";
 
-            file.Open(resourceScriptPath, File.ModeFlags.Write);
+            if (file.Open(resourceScriptPath, File.ModeFlags.Write) != Error.Ok)
+            {
+                GD.PushError($"{nameof(CreateClassTypeResource)}: Failed to open resource script file.");
+                return null;
+            }
             file.StoreString(sourceCode);
             file.Close();
 
@@ -105,7 +109,11 @@ namespace Fractural.DependencyInjection
                 GD.PushWarning($"{nameof(CreateClassTypeResource)}: Failed because resource path (\"{resourcePath}\") exists.");
                 return null;
             }
-            ResourceSaver.Save(resourcePath, resource);
+            if (ResourceSaver.Save(resourcePath, resource) != Error.Ok)
+            {
+                GD.PushError($"{nameof(CreateClassTypeResource)}: Failed to save ClassType resource.");
+                return null;
+            }
             return resource;
         }
 
@@ -113,7 +121,11 @@ namespace Fractural.DependencyInjection
         {
             var dir = new Directory();
             if (!dir.DirExists(ClassTypesDirectory))
-                dir.MakeDirRecursive(ClassTypesDirectory);
+                if (dir.MakeDirRecursive(ClassTypesDirectory) != Error.Ok)
+                {
+                    GD.PushError($"{nameof(ClassTypeInspectorPlugin)}: Failed to create ClassTypesDirectory: {ClassTypesDirectory}");
+                    return;
+                }
             var files = FileUtils.GetDirFiles(ClassTypesDirectory, true, new[] { "tres" });
             ClassTypeResourcesDict.Clear();
             foreach (var filePath in files)
