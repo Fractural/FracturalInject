@@ -28,7 +28,7 @@ namespace Fractural.DependencyInjection
     /// <summary>
     /// Holds a mapping for dependencies.
     /// </summary>
-    [RegisteredType(nameof(DIContainer), "addons/FracturalInject/Assets/dependency-container.svg")]
+    [RegisteredType(nameof(DIContainer), "res://addons/FracturalInject/Assets/dependency-container.svg")]
     public class DIContainer : Node
     {
         public class BindingBuilder
