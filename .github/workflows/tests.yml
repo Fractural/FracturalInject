@@ -13,6 +13,13 @@ jobs:
         with:
           submodules: recursive
 
+      - name: Remove Stub Project
+        uses: jacobtomlinson/gha-find-replace@v3
+        with:
+          find: "(\r\n|\r|\n)Project(.*?)\"StubProject\"(.*?)(\r\n|\r|\n)EndProject"
+          replace: " "
+          regex: true
+
       - name: Install Dependencies
         run: |
           nuget restore
@@ -27,7 +34,7 @@ jobs:
 
       - name: Upload Test Results
         if: always()
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: Test Results
-          path: tests/results.xml
+          path: Tests/results.xml
