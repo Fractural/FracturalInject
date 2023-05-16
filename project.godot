@@ -33,9 +33,9 @@ Main/GenerateVersionPreprocessorDefines=false
 
 [WAT]
 
-Test_Directory="res://tests"
-Results_Directory="res://tests"
-Test_Metadata_Directory="res://tests"
+Test_Directory="res://Tests"
+Results_Directory="res://Tests"
+Test_Metadata_Directory="res://Tests"
 Tags=PoolStringArray(  )
 Cache_Tests=true
 Window_Size=Vector2( 1280, 720 )
