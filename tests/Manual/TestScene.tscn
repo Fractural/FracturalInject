@@ -30,7 +30,17 @@ script = ExtResource( 2 )
 __meta__ = {
 "_nodeVars/visible": true
 }
-Mode = 0
 _nodeVars = {
-"1": NodePath("")
+"1": {
+"Operation": 0,
+"ValueType": "System.Int32"
+},
+"2": {
+"Operation": 0,
+"ValueType": "System.Int32"
+},
+"3": {
+"Operation": 0,
+"ValueType": "System.Int32"
+}
 }

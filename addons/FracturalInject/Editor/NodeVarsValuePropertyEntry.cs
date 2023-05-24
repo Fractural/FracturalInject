@@ -185,8 +185,10 @@ namespace Fractural.DependencyInjection
 
         public void SetData(NodeVarData value)
         {
-            if (value.ValueType != Data.ValueType)
+            GD.Print("SetData 1");
+            if (Data != null && value.ValueType != Data.ValueType)
             {
+                GD.Print("SetData 1.1");
                 // Update the ValueProperty to the new data type
                 _valueProperty.QueueFree();
                 _valueProperty = ValueProperty.CreateValueProperty(value.ValueType);
@@ -195,17 +197,23 @@ namespace Fractural.DependencyInjection
                     Data.Value = newValue;
                     InvokeDataChanged();
                 };
+                GD.Print("SetData 1.2");
                 _valuePropertyContainer.AddChild(_valueProperty);
+                GD.Print("SetData 1.3");
             }
+            GD.Print("SetData 3");
             Data = value;
             NameProperty.Disabled = Data.IsFixed;
             _valueTypeButton.Disabled = Data.IsFixed;
             _operationButton.Disabled = Data.IsFixed;
+            GD.Print("SetData 4");
             _deleteButton.Visible = !Data.IsFixed;
             SetValueTypeValueDisplay(value.ValueType);
             SetOperationsValueDisplay(value.Operation);
             NameProperty.SetValue(value.Name);
+            GD.Print("SetData 5");
             _nodePathProperty.SetValue(value.ContainerPath);
+            GD.Print("SetData 6");
         }
 
         private void InitOperationTypes()
