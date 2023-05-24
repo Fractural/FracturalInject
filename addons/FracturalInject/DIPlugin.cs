@@ -13,6 +13,7 @@ namespace Fractural.DependencyInjection
         {
             AddManagedInspectorPlugin(new ClassTypeInspectorPlugin(this));
             AddManagedInspectorPlugin(new DependencyPathInspectorPlugin(this));
+            AddManagedInspectorPlugin(new NodeVarsInspectorPlugin(this));
         }
     }
 }
