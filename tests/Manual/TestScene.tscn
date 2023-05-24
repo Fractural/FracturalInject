@@ -1,6 +1,7 @@
-[gd_scene load_steps=3 format=2]
+[gd_scene load_steps=4 format=2]
 
 [ext_resource path="res://addons/FracturalInject/Dependency.cs" type="Script" id=1]
+[ext_resource path="res://addons/FracturalInject/Editor/NodeVarsContainer.cs" type="Script" id=2]
 [ext_resource path="res://ClassTypes/NodeClassType.tres" type="Resource" id=3]
 
 [node name="Node2D" type="Node2D"]
@@ -23,3 +24,13 @@ DependencyPath = NodePath("")
 script = ExtResource( 1 )
 ClassType = null
 DependencyPath = NodePath("")
+
+[node name="NodeVarsContainer" type="Node" parent="."]
+script = ExtResource( 2 )
+__meta__ = {
+"_nodeVars/visible": true
+}
+Mode = 0
+_nodeVars = {
+"1": NodePath("")
+}
