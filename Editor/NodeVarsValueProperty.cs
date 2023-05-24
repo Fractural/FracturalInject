@@ -198,6 +198,8 @@ namespace Fractural.DependencyInjection
                 currFocusedEntry = null;
 
             GD.Print("Updating prop 7");
+            foreach (var key in Value.Keys)
+                GD.Print($"\t {key}: {key.GetType()}");
             var nextKey = DefaultValueUtils.GetDefault(Value.Keys.Cast<string>());
             _addElementButton.Disabled = !_canAddNewVars || Value.Contains(nextKey);
         }
@@ -228,15 +230,18 @@ namespace Fractural.DependencyInjection
 
         private void OnEntryNameChanged(string oldKey, NodeVarsValuePropertyEntry entry)
         {
+            GD.Print("OnEntryNameChanged ", oldKey, " entry ", entry.ToGDDict());
             var newKey = entry.Data.Name;
             if (Value.Contains(newKey))
             {
+                GD.Print($"Value already contains {newKey} reverting");
                 // Revert CurrentKey back
                 entry.Data.Name = oldKey;
                 // Reject change since the newKey already exists
                 entry.NameProperty.SetValue(oldKey);
                 return;
             }
+            GD.Print($"Value doesn't contains {newKey}");
             var currValue = Value[oldKey];
             Value.Remove(oldKey);
             Value[newKey] = currValue;
@@ -262,7 +267,11 @@ namespace Fractural.DependencyInjection
             //
             // Use default types for the newly added element
             var nextKey = DefaultValueUtils.GetDefault(Value.Keys.Cast<string>());
-            Value[nextKey] = DefaultValueUtils.GetDefault<NodePath>();
+            GD.Print($"nextkey: {nextKey}");
+            Value[nextKey] = new NodeVarData()
+            {
+                Name = nextKey
+            }.ToGDDict();
             InvokeValueChanged(Value);
         }
 
