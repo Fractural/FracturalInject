@@ -163,7 +163,7 @@ namespace Fractural.DependencyInjection
 
             _operationButton = new OptionButton();
             _operationButton.SizeFlagsHorizontal = (int)SizeFlags.Fill;
-            _operationButton.RectMinSize = new Vector2(160, 0);
+            _operationButton.RectMinSize = new Vector2(80 * _assetsRegistry.Scale, 0);
             _operationButton.Connect("item_selected", this, nameof(OnOperationSelected));
 
             _isPointerButton = new Button();
