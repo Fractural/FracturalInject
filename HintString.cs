@@ -23,7 +23,7 @@ namespace Fractural
             LocalAttributes,
         }
 
-        public static string NodeVars(NodeVarsMode mode)
+        public static string NodeVars(NodeVarsMode mode = NodeVarsMode.LocalAttributes)
         {
             return $"{nameof(NodeVars)},{mode}";
         }
