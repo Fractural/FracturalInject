@@ -11,8 +11,8 @@ namespace Fractural.DependencyInjection
     public class ClassTypeInspectorPlugin : EditorInspectorPlugin, IManagedUnload
     {
         public string ClassTypesDirectory = "res://ClassTypes";
-        public Dictionary<string, IClassTypeRes> ClassTypeResourcesDict { get; set; } = new Dictionary<string, IClassTypeRes>();
-        public Dictionary<string, Type> NodeClassTypesDict { get; set; } = new Dictionary<string, Type>();
+        public Dictionary<string, IClassTypeRes> ClassTypeResourcesDict { get; set; }
+        public Dictionary<string, Type> NodeClassTypesDict { get; set; }
 
         private ExtendedPlugin _plugin;
         private ConfirmationDialog _confirmCreateClassTypeResourceDialog;
@@ -28,6 +28,9 @@ namespace Fractural.DependencyInjection
             _confirmCreateClassTypeResourceDialog.Connect("confirmed", this, nameof(OnConfirmedCreateClassTypeResource));
             plugin.AddManagedControlToContainer(EditorPlugin.CustomControlContainer.Toolbar, _confirmCreateClassTypeResourceDialog);
 
+            ClassTypeResourcesDict = new Dictionary<string, IClassTypeRes>();
+            NodeClassTypesDict = new Dictionary<string, Type>();
+
             UpdateResources();
         }
 
@@ -35,8 +38,8 @@ namespace Fractural.DependencyInjection
         {
             _plugin.GetEditorInterface().GetResourceFilesystem().Disconnect("filesystem_changed", this, nameof(UpdateResources));
             _confirmCreateClassTypeResourceDialog.QueueFree();
-            ClassTypeResourcesDict.Clear();
-            NodeClassTypesDict.Clear();
+            ClassTypeResourcesDict = null;
+            NodeClassTypesDict = null;
         }
 
         public override bool CanHandle(Godot.Object @object)
