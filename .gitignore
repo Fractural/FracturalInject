@@ -10,3 +10,6 @@ export_presets.cfg
 # Tests
 tests/results.xml
 tests/metadata.json
+
+addons/GodotVisualStudioStub/bin/
+addons/GodotVisualStudioStub/obj/

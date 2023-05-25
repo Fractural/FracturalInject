@@ -31,6 +31,12 @@ Main/GenerateVersionPreprocessorDefines=false
 "C# Resource Registry/SearchType"=0
 "C# Resource Registry/ResourceScriptDirectories"=[ "res://" ]
 
+[MonoCustomResourceRegistry]
+
+ClassPrefix=""
+SearchType=0
+ResourceScriptDirectories=[ "res://" ]
+
 [WAT]
 
 Test_Directory="res://tests"
