@@ -12,10 +12,10 @@ namespace Fractural.DependencyInjection
 
         protected override void Load()
         {
-            AssetsRegistry = new EditorAssetsRegistry(this);
+            //AssetsRegistry = new EditorAssetsRegistry(this);
 
-            AddManagedInspectorPlugin(new ClassTypeInspectorPlugin(this));
-            AddManagedInspectorPlugin(new DependencyPathInspectorPlugin(this));
+            //AddManagedInspectorPlugin(new ClassTypeInspectorPlugin(this));
+            //AddManagedInspectorPlugin(new DependencyPathInspectorPlugin(this));
             AddManagedInspectorPlugin(new NodeVarsInspectorPlugin(this));
         }
     }
