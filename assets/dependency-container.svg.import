@@ -2,15 +2,15 @@
 
 importer="texture"
 type="StreamTexture"
-path="res://.import/dependency-container.svg-a78bcffed596c9d082716bb0399680f9.stex"
+path="res://.import/dependency-container.svg-fa7976b80324bc029bcec016c9f352c6.stex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://addons/FracturalInject/Assets/dependency-container.svg"
-dest_files=[ "res://.import/dependency-container.svg-a78bcffed596c9d082716bb0399680f9.stex" ]
+source_file="res://addons/FracturalInject/assets/dependency-container.svg"
+dest_files=[ "res://.import/dependency-container.svg-fa7976b80324bc029bcec016c9f352c6.stex" ]
 
 [params]
 
