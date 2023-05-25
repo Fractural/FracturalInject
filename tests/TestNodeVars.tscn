@@ -1,0 +1,52 @@
+[gd_scene load_steps=3 format=2]
+
+[ext_resource path="res://addons/FracturalInject/Editor/NodeVarsContainer.cs" type="Script" id=1]
+[ext_resource path="res://Tests/InheritedNodeVarsContainer.cs" type="Script" id=2]
+
+[node name="Node" type="Node"]
+
+[node name="NodeVarsContainer" type="Node" parent="."]
+script = ExtResource( 1 )
+__meta__ = {
+"_nodeVars/visible": true
+}
+_nodeVars = {
+}
+
+[node name="InheritedNodeVarsContainer" type="Node" parent="NodeVarsContainer"]
+script = ExtResource( 2 )
+__meta__ = {
+"_nodeVars/visible": true
+}
+_nodeVars = {
+"MyAttributeGetVar": {
+"Operation": 0,
+"Value": true,
+"ValueType": "System.Boolean"
+},
+"MyAttributeSetVar": {
+"Operation": 1,
+"Value": true,
+"ValueType": "System.Boolean"
+},
+"MyBoolVar": {
+"Operation": 2,
+"Value": false,
+"ValueType": "System.Boolean"
+},
+"MyFloatVar": {
+"Operation": 2,
+"Value": 0.0,
+"ValueType": "System.Single"
+},
+"MyGetVar": {
+"Operation": 1,
+"Value": true,
+"ValueType": "System.Boolean"
+},
+"MySetVar": {
+"Operation": 0,
+"Value": true,
+"ValueType": "System.Boolean"
+}
+}
