@@ -74,7 +74,6 @@ namespace Fractural.DependencyInjection
         public NodeVarsValuePropertyEntry() { }
         public NodeVarsValuePropertyEntry(Node sceneRoot, Node relativeToNode)
         {
-            GD.Print("NodeVarsValuePropertyEntry 1");
             _relativeToNode = relativeToNode;
 
             var control = new Control();
@@ -82,8 +81,6 @@ namespace Fractural.DependencyInjection
             control.SizeFlagsStretchRatio = 0.25f;
             control.RectSize = new Vector2(24, 0);
             AddChild(control);
-
-            GD.Print("NodeVarsValuePropertyEntry 2");
 
             NameProperty = new StringValueProperty();
             NameProperty.ValueChanged += OnNameChanged;
@@ -104,12 +101,10 @@ namespace Fractural.DependencyInjection
             _nodePathProperty.SizeFlagsHorizontal = (int)SizeFlags.ExpandFill;
             _nodePathProperty.RelativeToNode = relativeToNode;
 
-            GD.Print("NodeVarsValuePropertyEntry 3");
-
             _valueTypeButton = new OptionButton();
             _valueTypeButton.SizeFlagsHorizontal = (int)SizeFlags.Fill;
             _valueTypeButton.ClipText = true;
-            _valueTypeButton.Connect("item_selected", this, nameof(OnValueSelected));
+            _valueTypeButton.Connect("item_selected", this, nameof(OnValueTypeSelected));
 
             _operationButton = new OptionButton();
             _operationButton.SizeFlagsHorizontal = (int)SizeFlags.ExpandFill;
@@ -122,8 +117,6 @@ namespace Fractural.DependencyInjection
             _isPointerButton.ClipText = true;
             _isPointerButton.Connect("toggled", this, nameof(OnIsPointerToggled));
 
-            GD.Print("NodeVarsValuePropertyEntry 3.5");
-
             AddChild(_containerVarPopupSearch);
             AddChild(NameProperty);
             AddChild(_valueTypeButton);
@@ -133,13 +126,9 @@ namespace Fractural.DependencyInjection
             AddChild(_valuePropertyContainer);
             AddChild(_isPointerButton);
 
-            GD.Print("NodeVarsValuePropertyEntry 4");
-
             _deleteButton = new Button();
             _deleteButton.Connect("pressed", this, nameof(OnDeletePressed));
             AddChild(_deleteButton);
-
-            GD.Print("Finish");
         }
 
         public override void _Ready()
@@ -185,35 +174,45 @@ namespace Fractural.DependencyInjection
 
         public void SetData(NodeVarData value)
         {
-            GD.Print("SetData 1");
-            if (Data != null && value.ValueType != Data.ValueType)
-            {
-                GD.Print("SetData 1.1");
-                // Update the ValueProperty to the new data type
-                _valueProperty.QueueFree();
-                _valueProperty = ValueProperty.CreateValueProperty(value.ValueType);
-                _valueProperty.ValueChanged += (newValue) =>
-                {
-                    Data.Value = newValue;
-                    InvokeDataChanged();
-                };
-                GD.Print("SetData 1.2");
-                _valuePropertyContainer.AddChild(_valueProperty);
-                GD.Print("SetData 1.3");
-            }
-            GD.Print("SetData 3");
+            var oldData = Data;
             Data = value;
+
+            if ((oldData == null && value != null) || (oldData != null && oldData.ValueType != Data.ValueType))
+                UpdateValuePropertyType();
+
             NameProperty.Disabled = Data.IsFixed;
             _valueTypeButton.Disabled = Data.IsFixed;
             _operationButton.Disabled = Data.IsFixed;
-            GD.Print("SetData 4");
             _deleteButton.Visible = !Data.IsFixed;
             SetValueTypeValueDisplay(value.ValueType);
             SetOperationsValueDisplay(value.Operation);
             NameProperty.SetValue(value.Name);
-            GD.Print("SetData 5");
-            _nodePathProperty.SetValue(value.ContainerPath);
-            GD.Print("SetData 6");
+            _valueProperty.SetValue(value.Value, false);
+            _nodePathProperty.SetValue(value.ContainerPath, false);
+            UpdateIsPointerVisibility();
+        }
+
+        private void UpdateIsPointerVisibility()
+        {
+            _nodePathProperty.Visible = Data.IsPointer;
+            _containerVarSelectButton.Visible = Data.IsPointer;
+            _valuePropertyContainer.Visible = !Data.IsPointer;
+        }
+
+        /// <summary>
+        /// Recreates the ValueProperty based on the current Data.ValueType.
+        /// </summary>
+        private void UpdateValuePropertyType()
+        {
+            // Update the ValueProperty to the new data type if the data type changes.
+            _valueProperty?.QueueFree();
+            _valueProperty = ValueProperty.CreateValueProperty(Data.ValueType);
+            _valueProperty.ValueChanged += (newValue) =>
+            {
+                Data.Value = newValue;
+                InvokeDataChanged();
+            };
+            _valuePropertyContainer.AddChild(_valueProperty);
         }
 
         private void InitOperationTypes()
@@ -287,6 +286,7 @@ namespace Fractural.DependencyInjection
 
         private void OnNameChanged(string newName)
         {
+            GD.Print("internal name changed ", newName);
             var oldName = Data.Name;
             Data.Name = newName;
             NameChanged?.Invoke(oldName, this);
@@ -298,16 +298,24 @@ namespace Fractural.DependencyInjection
             InvokeDataChanged();
         }
 
-        private void OnValueSelected(int index)
+        private void OnValueTypeSelected(int index)
         {
-            Data.ValueType = _valueTypes.First(x => x.Index == index).Type;
+            var newType = _valueTypes.First(x => x.Index == index).Type;
+            if (Data.ValueType == newType)
+                return;
+            Data.ValueType = newType;
+            Data.Value = DefaultValueUtils.GetDefault(Data.ValueType);
             SetValueTypeValueDisplay(Data.ValueType);
+            UpdateValuePropertyType();
             InvokeDataChanged();
         }
 
         private void OnOperationSelected(int index)
         {
-            Data.Operation = _operationTypes.First(x => x.Index == index).Operation;
+            var operation = _operationTypes.First(x => x.Index == index).Operation;
+            if (Data.Operation == operation)
+                return;
+            Data.Operation = operation;
             SetOperationsValueDisplay(Data.Operation);
             InvokeDataChanged();
         }
@@ -318,6 +326,7 @@ namespace Fractural.DependencyInjection
                 Data.ContainerPath = new NodePath();
             else
                 Data.ContainerPath = null;
+            UpdateIsPointerVisibility();
             InvokeDataChanged();
         }
 
