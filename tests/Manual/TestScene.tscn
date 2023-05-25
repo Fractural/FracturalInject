@@ -33,14 +33,12 @@ __meta__ = {
 _nodeVars = {
 "1": {
 "Operation": 0,
-"ValueType": "System.Int32"
+"Value": 0.0,
+"ValueType": "System.Single"
 },
 "2": {
 "Operation": 0,
-"ValueType": "System.Int32"
-},
-"3": {
-"Operation": 0,
+"Value": 0,
 "ValueType": "System.Int32"
 }
 }

@@ -129,16 +129,13 @@ namespace Fractural.DependencyInjection
 
             // TODO NOW: Debug this ValueProperty till it works.
 
-            GD.Print("Updating prop");
             _container.Visible = this.GetMeta<bool>("visible", true);   // Default to being visible if the meta tag doesn't exist.
             _editButton.Pressed = _container.Visible;
             _editButton.Text = EditButtonText;
 
-            GD.Print("Updating prop 2");
             int index = 0;
             int childCount = _keyValueEntriesVBox.GetChildCount();
 
-            GD.Print("Updating prop 3");
             var currFocusedEntry = _currentFocused?.GetAncestor<NodeVarsValuePropertyEntry>();
             if (currFocusedEntry != null)
             {
@@ -164,23 +161,19 @@ namespace Fractural.DependencyInjection
                 }
             }
 
-            GD.Print("Updating prop 4, with Value: ", Value);
             foreach (string key in Value.Keys)
             {
-                GD.Print("\tkey: ", key);
                 NodeVarsValuePropertyEntry entry;
                 if (index >= childCount)
                     entry = CreateDefaultEntry();
                 else
                     entry = _keyValueEntriesVBox.GetChild<NodeVarsValuePropertyEntry>(index);
-                GD.Print("\tentry: ", entry);
 
                 if (currFocusedEntry == null || entry != currFocusedEntry)
                     entry.SetData(NodeVarData.FromGDDict(Value.Get<GDC.Dictionary>(key), key));
                 index++;
             }
 
-            GD.Print("Updating prop 5");
             // Free extra entries
             if (index < childCount)
             {
@@ -193,13 +186,9 @@ namespace Fractural.DependencyInjection
                 }
             }
 
-            GD.Print("Updating prop 6");
             if (!IsInstanceValid(currFocusedEntry))
                 currFocusedEntry = null;
 
-            GD.Print("Updating prop 7");
-            foreach (var key in Value.Keys)
-                GD.Print($"\t {key}: {key.GetType()}");
             var nextKey = DefaultValueUtils.GetDefault(Value.Keys.Cast<string>());
             _addElementButton.Disabled = !_canAddNewVars || Value.Contains(nextKey);
         }
@@ -217,31 +206,28 @@ namespace Fractural.DependencyInjection
 
         private NodeVarsValuePropertyEntry CreateDefaultEntry()
         {
-            GD.Print("create default entry");
             var entry = new NodeVarsValuePropertyEntry(_sceneRoot, _relativeToNode);
             entry.NameChanged += OnEntryNameChanged;
             entry.DataChanged += OnEntryDataChanged;
             entry.Deleted += OnEntryDeleted;
             // Add entry if we ran out of existing ones
             _keyValueEntriesVBox.AddChild(entry);
-            GD.Print("Finsihed create default entry");
             return entry;
         }
 
         private void OnEntryNameChanged(string oldKey, NodeVarsValuePropertyEntry entry)
         {
-            GD.Print("OnEntryNameChanged ", oldKey, " entry ", entry.ToGDDict());
             var newKey = entry.Data.Name;
+            GD.Print("entry name changed to ", newKey);
             if (Value.Contains(newKey))
             {
-                GD.Print($"Value already contains {newKey} reverting");
+                GD.Print($"entry name {newKey} already exists, reverting");
                 // Revert CurrentKey back
                 entry.Data.Name = oldKey;
                 // Reject change since the newKey already exists
                 entry.NameProperty.SetValue(oldKey);
                 return;
             }
-            GD.Print($"Value doesn't contains {newKey}");
             var currValue = Value[oldKey];
             Value.Remove(oldKey);
             Value[newKey] = currValue;
@@ -267,10 +253,11 @@ namespace Fractural.DependencyInjection
             //
             // Use default types for the newly added element
             var nextKey = DefaultValueUtils.GetDefault(Value.Keys.Cast<string>());
-            GD.Print($"nextkey: {nextKey}");
             Value[nextKey] = new NodeVarData()
             {
-                Name = nextKey
+                Name = nextKey,
+                ValueType = typeof(int),
+                Value = DefaultValueUtils.GetDefault<int>()
             }.ToGDDict();
             InvokeValueChanged(Value);
         }
