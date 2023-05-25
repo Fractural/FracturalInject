@@ -8,8 +8,9 @@ namespace Fractural.DependencyInjection
     [AttributeUsage(System.AttributeTargets.Field | System.AttributeTargets.Property | System.AttributeTargets.Method | System.AttributeTargets.Class, AllowMultiple = false)]
     public class NodeVarAttribute : System.Attribute
     {
-        public NodeVarOperation Operation { get; set; }
-        public NodeVarAttribute(NodeVarOperation operation = NodeVarOperation.GetSet)
+        public NodeVarOperation? Operation { get; set; }
+        public NodeVarAttribute() { }
+        public NodeVarAttribute(NodeVarOperation operation)
         {
             Operation = operation;
         }

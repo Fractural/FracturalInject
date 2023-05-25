@@ -58,6 +58,7 @@ namespace Fractural.DependencyInjection
             }
         }
 
+        public T GetNodeVar<T>(string key) => (T)GetNodeVar(key);
         public object GetNodeVar(string key)
         {
             var data = NodeVars[key];
@@ -88,7 +89,7 @@ namespace Fractural.DependencyInjection
         {
             int index = 0;
             NodeVarData[] result = new NodeVarData[_nodeVars.Count];
-            foreach (string key in _nodeVars)
+            foreach (string key in _nodeVars.Keys)
             {
                 result[index] = NodeVarData.FromGDDict(_nodeVars.Get<GDC.Dictionary>(key), key);
                 index++;

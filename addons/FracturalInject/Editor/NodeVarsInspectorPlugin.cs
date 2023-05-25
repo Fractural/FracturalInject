@@ -1,7 +1,6 @@
 ﻿using Godot;
 using Fractural.Plugin;
 using System;
-using System.Reflection;
 using System.Collections.Generic;
 using Fractural.Utils;
 using System.Linq;
@@ -10,10 +9,10 @@ namespace Fractural.DependencyInjection
 {
     public class NodeVarsInspectorPlugin : EditorInspectorPlugin
     {
-        private EditorPlugin _plugin;
+        private ExtendedPlugin _plugin;
 
         public NodeVarsInspectorPlugin() { }
-        public NodeVarsInspectorPlugin(EditorPlugin plugin)
+        public NodeVarsInspectorPlugin(ExtendedPlugin plugin)
         {
             _plugin = plugin;
         }
@@ -30,37 +29,24 @@ namespace Fractural.DependencyInjection
             if (parser.TryGetArgs(nameof(HintString.NodeVars), out string modeString))
             {
                 var objectType = node.GetCSharpType();
-                // User can add NodeVars to StateGraphs themselves.
-                List<NodeVarData> fixedNodeVars = null;
+                NodeVarData[] fixedNodeVars = null;
                 bool canAddNewVars = false;
 
                 var mode = (HintString.NodeVarsMode)Enum.Parse(typeof(HintString.NodeVarsMode), modeString);
                 if (mode == HintString.NodeVarsMode.Attributes || mode == HintString.NodeVarsMode.LocalAttributes)
-                {
-                    // Use NodeVar attributes attached to properties on the State's C# script
-                    // to determine what NodeVars are exposed
-                    //
-                    // User cannot edit the NodeVars of a IState, since it's determined
-                    // by the State's script.
-                    fixedNodeVars = new List<NodeVarData>();
-                    foreach (var property in objectType.GetProperties())
-                    {
-                        var attribute = property.GetCustomAttribute<NodeVarAttribute>();
-                        if (attribute == null)
-                            continue;
-                        fixedNodeVars.Add(new NodeVarData()
-                        {
-                            Name = property.Name,
-                            ValueType = property.PropertyType,
-                            Operation = attribute.Operation,
-                        });
-                    }
-                }
-
+                    fixedNodeVars = NodeVarsUtils.GetFixedNodeVarTemplates(objectType);
                 if (mode == HintString.NodeVarsMode.Local || mode == HintString.NodeVarsMode.LocalAttributes)
                     canAddNewVars = true;
 
-                AddPropertyEditor(path, new ValueEditorProperty(new NodeVarsValueProperty(_plugin.GetEditorInterface().GetEditedSceneRoot(), @object as Node, fixedNodeVars?.ToArray(), canAddNewVars)));
+                AddPropertyEditor(path, new ValueEditorProperty(
+                    new NodeVarsValueProperty(
+                        _plugin.AssetsRegistry,
+                        _plugin.GetEditorInterface().GetEditedSceneRoot(),
+                        @object as Node,
+                        fixedNodeVars,
+                        canAddNewVars)
+                    )
+                );
                 return true;
             }
             return false;

@@ -11,7 +11,6 @@ namespace Fractural.DependencyInjection
         public Type ValueType { get; set; }
         public NodeVarOperation Operation { get; set; }
         public string Name { get; set; }
-        public bool IsFixed { get; set; }
         public string ContainerVarName { get; set; }
         public NodePath ContainerPath { get; set; }
 
@@ -35,8 +34,6 @@ namespace Fractural.DependencyInjection
                 dict[nameof(ContainerPath)] = ContainerPath;
             if (Value != null)
                 dict[nameof(Value)] = Value;
-            if (IsFixed)
-                dict[nameof(IsFixed)] = true;
             if (IsPointer)
             {
                 dict[nameof(ContainerPath)] = ContainerPath;
@@ -51,7 +48,6 @@ namespace Fractural.DependencyInjection
             {
                 ValueType = ReflectionUtils.FindTypeFullName(dict.Get<string>(nameof(ValueType))),
                 Operation = (NodeVarOperation)dict.Get<int>(nameof(Operation)),
-                IsFixed = dict.Get(nameof(IsFixed), false),
                 ContainerPath = dict.Get<NodePath>(nameof(ContainerPath), null),
                 ContainerVarName = dict.Get<string>(nameof(ContainerVarName), null),
                 Value = dict.Get<object>(nameof(Value), null),

@@ -1,8 +1,9 @@
-[gd_scene load_steps=4 format=2]
+[gd_scene load_steps=5 format=2]
 
 [ext_resource path="res://addons/FracturalInject/Dependency.cs" type="Script" id=1]
 [ext_resource path="res://addons/FracturalInject/Editor/NodeVarsContainer.cs" type="Script" id=2]
 [ext_resource path="res://ClassTypes/NodeClassType.tres" type="Resource" id=3]
+[ext_resource path="res://tests/InheritedNodeVarsContainer.cs" type="Script" id=4]
 
 [node name="Node2D" type="Node2D"]
 
@@ -31,12 +32,74 @@ __meta__ = {
 "_nodeVars/visible": true
 }
 _nodeVars = {
-"1": {
+"Cool var": {
+"Operation": 2,
+"Value": Vector3( 3.34, 234.34, 434 ),
+"ValueType": "Godot.Vector3"
+},
+"Var1": {
 "Operation": 0,
+"Value": true,
+"ValueType": "System.Boolean"
+},
+"Var2": {
+"Operation": 0,
+"Value": 0,
+"ValueType": "System.Int32"
+}
+}
+
+[node name="OtherContainer" type="Node" parent="NodeVarsContainer"]
+script = ExtResource( 2 )
+__meta__ = {
+"_nodeVars/visible": true
+}
+Mode = 1
+_nodeVars = {
+}
+
+[node name="Node" type="Node" parent="."]
+script = ExtResource( 4 )
+__meta__ = {
+"_nodeVars/visible": true
+}
+_nodeVars = {
+"MyAttributeGetVar": {
+"Operation": 0,
+"Value": true,
+"ValueType": "System.Boolean"
+},
+"MyAttributeSetVar": {
+"Operation": 1,
+"Value": true,
+"ValueType": "System.Boolean"
+},
+"MyBoolVar": {
+"Operation": 2,
+"Value": true,
+"ValueType": "System.Boolean"
+},
+"MyFloatVar": {
+"Operation": 2,
 "Value": 0.0,
 "ValueType": "System.Single"
 },
-"2": {
+"MyGetVar": {
+"Operation": 1,
+"Value": true,
+"ValueType": "System.Boolean"
+},
+"MySetVar": {
+"Operation": 0,
+"Value": true,
+"ValueType": "System.Boolean"
+},
+"OtherVar1": {
+"Operation": 0,
+"Value": 0,
+"ValueType": "System.Int32"
+},
+"Var2": {
 "Operation": 0,
 "Value": 0,
 "ValueType": "System.Int32"
