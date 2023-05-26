@@ -38,6 +38,8 @@ _nodeVars = {
 "ValueType": "Godot.Vector3"
 },
 "Var1": {
+"ContainerPath": NodePath(""),
+"ContainerVarName": null,
 "Operation": 0,
 "Value": true,
 "ValueType": "System.Boolean"

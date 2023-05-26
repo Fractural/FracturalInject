@@ -29,7 +29,7 @@ namespace Fractural.DependencyInjection
     }
 
     [Tool]
-    public class NodeVarsValueProperty : ValueProperty<GDC.Dictionary>
+    public class NodeVarsValueProperty : ValueProperty<GDC.Dictionary>, ISerializationListener
     {
         private Button _editButton;
         private Control _container;
@@ -90,10 +90,10 @@ namespace Fractural.DependencyInjection
 
         public override void _Ready()
         {
-            base._Ready();
+#if TOOLS
             if (NodeUtils.IsInEditorSceneTab(this))
                 return;
-
+#endif
             _addElementButton.Icon = GetIcon("Add", "EditorIcons");
             GetViewport().Connect("gui_focus_changed", this, nameof(OnFocusChanged));
         }
@@ -263,6 +263,7 @@ namespace Fractural.DependencyInjection
 
         private void OnEntryDataChanged(object key, object newValue)
         {
+            GD.Print("data changed, invoking value changed");
             Value[key] = newValue;
             InvokeValueChanged(Value);
         }
@@ -308,5 +309,12 @@ namespace Fractural.DependencyInjection
             }
             return "Var" + highestNumber.ToString();
         }
+
+        public void OnBeforeSerialize()
+        {
+            _fixedNodeVarTemplatesDict = null;
+        }
+
+        public void OnAfterDeserialize() { }
     }
 }

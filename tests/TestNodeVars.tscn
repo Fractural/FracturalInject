@@ -1,7 +1,7 @@
 [gd_scene load_steps=3 format=2]
 
 [ext_resource path="res://addons/FracturalInject/Editor/NodeVarsContainer.cs" type="Script" id=1]
-[ext_resource path="res://Tests/InheritedNodeVarsContainer.cs" type="Script" id=2]
+[ext_resource path="res://Tests/PrefabWithNodeVars.tscn" type="PackedScene" id=2]
 
 [node name="Node" type="Node"]
 
@@ -11,17 +11,34 @@ __meta__ = {
 "_nodeVars/visible": true
 }
 _nodeVars = {
+"Var1": {
+"Operation": 0,
+"Value": Vector2( 0, 0 ),
+"ValueType": "Godot.Vector2"
+},
+"Var2": {
+"Operation": 0,
+"Value": true,
+"ValueType": "System.Boolean"
+},
+"Var3": {
+"Operation": 0,
+"Value": 3.2349,
+"ValueType": "System.Single"
+},
+"Var4": {
+"Operation": 0,
+"Value": "sdfsdfsdf",
+"ValueType": "System.String"
 }
+}
+lol = null
 
-[node name="InheritedNodeVarsContainer" type="Node" parent="NodeVarsContainer"]
-script = ExtResource( 2 )
-__meta__ = {
-"_nodeVars/visible": true
-}
+[node name="PrefabWithNodeVars" parent="NodeVarsContainer" instance=ExtResource( 2 )]
 _nodeVars = {
 "MyAttributeGetVar": {
 "Operation": 0,
-"Value": true,
+"Value": false,
 "ValueType": "System.Boolean"
 },
 "MyAttributeSetVar": {
@@ -36,7 +53,7 @@ _nodeVars = {
 },
 "MyFloatVar": {
 "Operation": 2,
-"Value": 0.0,
+"Value": 2.3434,
 "ValueType": "System.Single"
 },
 "MyGetVar": {
@@ -50,3 +67,4 @@ _nodeVars = {
 "ValueType": "System.Boolean"
 }
 }
+lol = null

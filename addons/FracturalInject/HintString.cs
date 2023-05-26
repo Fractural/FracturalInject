@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Godot;
+using System;
 
 namespace Fractural
 {
@@ -26,6 +27,15 @@ namespace Fractural
         public static string NodeVars(NodeVarsMode mode = NodeVarsMode.LocalAttributes)
         {
             return $"{nameof(NodeVars)},{mode}";
+        }
+
+        public static void AddNodeVarsProp(this PropertyListBuilder builder, string name, NodeVarsMode mode = NodeVarsMode.LocalAttributes)
+        {
+            builder.AddItem(
+                name: name,
+                type: Variant.Type.Dictionary,
+                hintString: NodeVars(mode)
+            );
         }
     }
 }

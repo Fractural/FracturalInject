@@ -194,9 +194,10 @@ namespace Fractural.DependencyInjection
 
         public override void _Ready()
         {
-            base._Ready();
+#if TOOLS
             if (NodeUtils.IsInEditorSceneTab(this))
                 return;
+#endif
             _deleteButton.Icon = GetIcon("Remove", "EditorIcons");
             _isPointerButton.Icon = GetIcon("GuiScrollArrowRightHl", "EditorIcons");
 
@@ -334,6 +335,12 @@ namespace Fractural.DependencyInjection
                     Name = "bool",
                     Type = typeof(bool),
                     Icon = GetIcon("bool", "EditorIcons"),
+                    UseIconOnly = true
+                },
+                new ValueTypeData() {
+                    Name = "string",
+                    Type = typeof(string),
+                    Icon = GetIcon("String", "EditorIcons"),
                     UseIconOnly = true
                 },
                 new ValueTypeData() {

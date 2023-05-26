@@ -32,6 +32,11 @@ namespace Fractural.DependencyInjection
                 NodeVarData[] fixedNodeVars = null;
                 bool canAddNewVars = false;
 
+                //if (node.Filename != "")
+                //{
+                //    var scene = ResourceLoader.Load(node.Filename);
+                //}
+
                 var mode = (HintString.NodeVarsMode)Enum.Parse(typeof(HintString.NodeVarsMode), modeString);
                 if (mode == HintString.NodeVarsMode.Attributes || mode == HintString.NodeVarsMode.LocalAttributes)
                     fixedNodeVars = NodeVarsUtils.GetFixedNodeVarTemplates(objectType);

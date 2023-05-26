@@ -1,0 +1,50 @@
+[gd_scene load_steps=2 format=2]
+
+[ext_resource path="res://Tests/InheritedNodeVarsContainer.cs" type="Script" id=1]
+
+[node name="PrefabWithNodeVars" type="Node"]
+script = ExtResource( 1 )
+__meta__ = {
+"_nodeVars/visible": true
+}
+SomeDictionary = {
+"Joe": 2343,
+"xddd": Vector3( 0, 34, 0 )
+}
+SomeArray = [  ]
+_nodeVars = {
+"MyAttributeGetVar": {
+"Operation": 0,
+"Value": false,
+"ValueType": "System.Boolean"
+},
+"MyAttributeSetVar": {
+"Operation": 1,
+"Value": true,
+"ValueType": "System.Boolean"
+},
+"MyBoolVar": {
+"Operation": 2,
+"Value": false,
+"ValueType": "System.Boolean"
+},
+"MyFloatVar": {
+"Operation": 2,
+"Value": 23.23,
+"ValueType": "System.Single"
+},
+"MyGetVar": {
+"Operation": 1,
+"Value": true,
+"ValueType": "System.Boolean"
+},
+"MySetVar": {
+"Operation": 0,
+"Value": true,
+"ValueType": "System.Boolean"
+}
+}
+
+[node name="SomeNode" type="Node" parent="."]
+
+[node name="SomeOtherNode" type="Node" parent="."]

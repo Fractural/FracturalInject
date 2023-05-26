@@ -1,11 +1,19 @@
 ﻿using Fractural.DependencyInjection;
 using Godot;
+using GDC = Godot.Collections;
 
 namespace Tests
 {
     [Tool]
     public class InheritedNodeVarsContainer : NodeVarsContainer
     {
+        [Export]
+        public Vector2 SomeVector2 { get; set; }
+        [Export]
+        public GDC.Dictionary SomeDictionary { get; set; }
+        [Export]
+        public GDC.Array SomeArray { get; set; }
+
         [NodeVar]
         public float MyFloatVar
         {
