@@ -5,7 +5,7 @@ using Fractural.Utils;
 
 namespace Fractural.DependencyInjection
 {
-    public static class NodeVarsUtils
+    public static class DictNodeVarsUtils
     {
         /// <summary>
         /// Returns all fixed node vars for a given type, with each node var
@@ -13,12 +13,12 @@ namespace Fractural.DependencyInjection
         /// </summary>
         /// <param name="objectType"></param>
         /// <returns></returns>
-        public static NodeVarData[] GetFixedNodeVarTemplates(Type objectType)
+        public static NodeVarData[] GetFixedDictNodeVarTemplates(Type objectType)
         {
-            var fixedNodeVars = new List<NodeVarData>();
+            var fixedDictNodeVars = new List<NodeVarData>();
             foreach (var property in objectType.GetProperties())
             {
-                var attribute = property.GetCustomAttribute<NodeVarAttribute>();
+                var attribute = property.GetCustomAttribute<DictNodeVarAttribute>();
                 if (attribute == null)
                     continue;
 
@@ -41,15 +41,15 @@ namespace Fractural.DependencyInjection
                         operation = NodeVarOperation.Get;
                 }
 
-                fixedNodeVars.Add(new NodeVarData()
+                fixedDictNodeVars.Add(new NodeVarData()
                 {
                     Name = property.Name,
                     ValueType = property.PropertyType,
                     Operation = operation,
-                    Value = DefaultValueUtils.GetDefault(property.PropertyType)
+                    InitialValue = DefaultValueUtils.GetDefault(property.PropertyType)
                 });
             }
-            return fixedNodeVars.ToArray();
+            return fixedDictNodeVars.ToArray();
         }
 
         /// <summary>
@@ -58,6 +58,6 @@ namespace Fractural.DependencyInjection
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <returns></returns>
-        public static NodeVarData[] GetFixedNodeVars<T>() => GetFixedNodeVarTemplates(typeof(T));
+        public static NodeVarData[] GetFixedDictNodeVars<T>() => GetFixedDictNodeVarTemplates(typeof(T));
     }
 }

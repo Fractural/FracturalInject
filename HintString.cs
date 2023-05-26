@@ -1,5 +1,4 @@
 ﻿using Godot;
-using System;
 
 namespace Fractural
 {
@@ -8,33 +7,33 @@ namespace Fractural
         public const string DependencyPath = nameof(DependencyPath);
         public const string ClassType = nameof(ClassType);
 
-        public enum NodeVarsMode
+        public enum DictNodeVarsMode
         {
             /// <summary>
-            /// NodeVars are customizable on the Node
+            /// DictNodeVars are customizable on the Node
             /// </summary>
             Local,
             /// <summary>
-            /// Fixed NodeVars will be generated for properties with the NodeVar attribute.
+            /// Fixed DictNodeVars will be generated for properties with the DictNodeVar attribute.
             /// </summary>
             Attributes,
             /// <summary>
-            /// NodeVars are customizable on the Node, and fixed NodeVars will be generated for properties with the NodeVar attribute.
+            /// DictNodeVars are customizable on the Node, and fixed DictNodeVars will be generated for properties with the DictNodeVar attribute.
             /// </summary>
             LocalAttributes,
         }
 
-        public static string NodeVars(NodeVarsMode mode = NodeVarsMode.LocalAttributes)
+        public static string DictNodeVars(DictNodeVarsMode mode = DictNodeVarsMode.LocalAttributes)
         {
-            return $"{nameof(NodeVars)},{mode}";
+            return $"{nameof(DictNodeVars)},{mode}";
         }
 
-        public static void AddNodeVarsProp(this PropertyListBuilder builder, string name, NodeVarsMode mode = NodeVarsMode.LocalAttributes)
+        public static void AddDictNodeVarsProp(this PropertyListBuilder builder, string name, DictNodeVarsMode mode = DictNodeVarsMode.LocalAttributes)
         {
             builder.AddItem(
                 name: name,
                 type: Variant.Type.Dictionary,
-                hintString: NodeVars(mode)
+                hintString: DictNodeVars(mode)
             );
         }
     }

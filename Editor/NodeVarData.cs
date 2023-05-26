@@ -7,6 +7,18 @@ namespace Fractural.DependencyInjection
 {
     public class NodeVarData
     {
+        public static string NodeVarToPropertyName(string nodeVarName)
+        {
+            // We use underscores to avoid name conflicts with regular properties
+            return $"____{nodeVarName}____";
+        }
+
+        public static string PropertyToNodeVarName(string propertyName)
+        {
+            // We use underscores to avoid name conflicts with regular properties
+            return propertyName.TrimPrefix("____").TrimSuffix("____");
+        }
+
         // Serialized
         public Type ValueType { get; set; }
         public NodeVarOperation Operation { get; set; }
@@ -15,11 +27,36 @@ namespace Fractural.DependencyInjection
         public NodePath ContainerPath { get; set; }
 
         // Runtime
-        public INodeVarsContainer Container { get; set; }
-        public object Value { get; set; }
+        public Node Container { get; set; }
+        public object InitialValue { get; set; }
+        private object _value;
+        public object Value
+        {
+            get
+            {
+                if (Operation != NodeVarOperation.Get && Operation != NodeVarOperation.GetSet)
+                    throw new Exception($"NodeVar: Attempted to get a non-getttable NodeVar \"{Name}\".");
+                return _value;
+            }
+            set
+            {
+                if (Operation != NodeVarOperation.Set && Operation != NodeVarOperation.GetSet)
+                    throw new Exception($"NodeVar: Attempted to set a non-setttable NodeVar \"{Name}\".");
+                _value = value;
+                if (IsPointer)
+                {
+                    if (Container is IDictNodeVarsContainer dictNodeVarsContainer)
+                        dictNodeVarsContainer.GetDictNodeVar(ContainerVarName);
+                    else
+                        Container.Get(NodeVarToPropertyName(ContainerVarName));
+                }
+            }
+        }
+
+        public void Reset() => _value = InitialValue;
 
         /// <summary>
-        /// Whether the NodeVar is a pointer to another NodeVar
+        /// Whether the DictNodeVar is a pointer to another DictNodeVar
         /// </summary>
         public bool IsPointer => ContainerPath != null;
 
@@ -32,8 +69,8 @@ namespace Fractural.DependencyInjection
             };
             if (ContainerPath != null)
                 dict[nameof(ContainerPath)] = ContainerPath;
-            if (Value != null)
-                dict[nameof(Value)] = Value;
+            if (InitialValue != null)
+                dict[nameof(InitialValue)] = InitialValue;
             if (IsPointer)
             {
                 dict[nameof(ContainerPath)] = ContainerPath;
@@ -50,7 +87,7 @@ namespace Fractural.DependencyInjection
                 Operation = (NodeVarOperation)dict.Get<int>(nameof(Operation)),
                 ContainerPath = dict.Get<NodePath>(nameof(ContainerPath), null),
                 ContainerVarName = dict.Get<string>(nameof(ContainerVarName), null),
-                Value = dict.Get<object>(nameof(Value), null),
+                InitialValue = dict.Get<object>(nameof(InitialValue), null),
                 Name = name,
             };
         }

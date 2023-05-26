@@ -1,5 +1,4 @@
 ﻿using Fractural.Plugin;
-using Fractural.Plugin.AssetsRegistry;
 using Godot;
 
 #if TOOLS
@@ -16,7 +15,7 @@ namespace Fractural.DependencyInjection
 
             //AddManagedInspectorPlugin(new ClassTypeInspectorPlugin(this));
             //AddManagedInspectorPlugin(new DependencyPathInspectorPlugin(this));
-            AddManagedInspectorPlugin(new NodeVarsInspectorPlugin(this));
+            AddManagedInspectorPlugin(new DictNodeVarsInspectorPlugin(this));
         }
     }
 }
