@@ -9,7 +9,7 @@ using GDC = Godot.Collections;
 namespace Fractural.DependencyInjection
 {
     [Tool]
-    public class NodeVarsValuePropertyEntry : HBoxContainer
+    public class DictNodeVarsValuePropertyEntry : HBoxContainer
     {
         private class ValueTypeData
         {
@@ -30,7 +30,7 @@ namespace Fractural.DependencyInjection
         /// <summary>
         /// NameChanged(string oldName, Entry entry)
         /// </summary>
-        public event Action<string, NodeVarsValuePropertyEntry> NameChanged;
+        public event Action<string, DictNodeVarsValuePropertyEntry> NameChanged;
         /// <summary>
         /// DataChanged(string name, NodePath newValue)
         /// </summary>
@@ -113,8 +113,8 @@ namespace Fractural.DependencyInjection
         private Node _relativeToNode;
         private IAssetsRegistry _assetsRegistry;
 
-        public NodeVarsValuePropertyEntry() { }
-        public NodeVarsValuePropertyEntry(IAssetsRegistry assetsRegistry, Node sceneRoot, Node relativeToNode)
+        public DictNodeVarsValuePropertyEntry() { }
+        public DictNodeVarsValuePropertyEntry(IAssetsRegistry assetsRegistry, Node sceneRoot, Node relativeToNode)
         {
             _assetsRegistry = assetsRegistry;
             _relativeToNode = relativeToNode;
@@ -151,7 +151,7 @@ namespace Fractural.DependencyInjection
             _valuePropertyContainer = new MarginContainer();
             _valuePropertyContainer.SizeFlagsHorizontal = (int)SizeFlags.ExpandFill;
 
-            _containerPathProperty = new NodePathValueProperty(sceneRoot, (node) => node is INodeVarsContainer);
+            _containerPathProperty = new NodePathValueProperty(sceneRoot, (node) => node is IDictNodeVarsContainer);
             _containerPathProperty.ValueChanged += OnNodePathChanged;
             _containerPathProperty.SizeFlagsHorizontal = (int)SizeFlags.ExpandFill;
             _containerPathProperty.RelativeToNode = relativeToNode;
@@ -259,7 +259,7 @@ namespace Fractural.DependencyInjection
             SetValueTypeValueDisplay(value.ValueType);
             SetOperationsValueDisplay(value.Operation);
             NameProperty.SetValue(value.Name);
-            _valueProperty.SetValue(value.Value, false);
+            _valueProperty.SetValue(value.InitialValue, false);
             _containerPathProperty.SetValue(value.ContainerPath, false);
             _containerVarSelectButton.Text = Data.ContainerVarName ?? "[Empty]";
             _isPointerButton.SetPressedNoSignal(Data.IsPointer);
@@ -268,7 +268,7 @@ namespace Fractural.DependencyInjection
 
         private void UpdateIsPointerVisibility()
         {
-            var containerNode = _relativeToNode.GetNodeOrNull(Data?.ContainerPath ?? new NodePath()) as INodeVarsContainer;
+            var containerNode = _relativeToNode.GetNodeOrNull(Data?.ContainerPath ?? new NodePath()) as IDictNodeVarsContainer;
             _containerPathProperty.Visible = Data.IsPointer;
             _containerVarSelectButton.Visible = Data.IsPointer;
             _containerVarSelectButton.Disabled = containerNode == null;
@@ -285,7 +285,7 @@ namespace Fractural.DependencyInjection
             _valueProperty = ValueProperty.CreateValueProperty(Data.ValueType);
             _valueProperty.ValueChanged += (newValue) =>
             {
-                Data.Value = newValue;
+                Data.InitialValue = newValue;
                 InvokeDataChanged();
             };
             _valuePropertyContainer.AddChild(_valueProperty);
@@ -386,7 +386,7 @@ namespace Fractural.DependencyInjection
             if (Data.ValueType == newType)
                 return;
             Data.ValueType = newType;
-            Data.Value = DefaultValueUtils.GetDefault(Data.ValueType);
+            Data.InitialValue = DefaultValueUtils.GetDefault(Data.ValueType);
             SetValueTypeValueDisplay(Data.ValueType);
             UpdateValuePropertyType();
             InvokeDataChanged();
@@ -420,8 +420,8 @@ namespace Fractural.DependencyInjection
 
         private void OnContainerVarSelectPressed()
         {
-            var container = _relativeToNode.GetNode<INodeVarsContainer>(Data.ContainerPath);
-            _containerVarPopupSearch.SearchEntries = container.GetNodeVarsList().Select(x => x.Name).ToArray();
+            var container = _relativeToNode.GetNode<IDictNodeVarsContainer>(Data.ContainerPath);
+            _containerVarPopupSearch.SearchEntries = container.GetDictNodeVarsList().Select(x => x.Name).ToArray();
             _containerVarPopupSearch.Popup_(_containerVarSelectButton.GetGlobalRect());
         }
 

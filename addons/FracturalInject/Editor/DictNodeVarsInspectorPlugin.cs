@@ -1,18 +1,16 @@
 ﻿using Godot;
 using Fractural.Plugin;
 using System;
-using System.Collections.Generic;
 using Fractural.Utils;
-using System.Linq;
 
 namespace Fractural.DependencyInjection
 {
-    public class NodeVarsInspectorPlugin : EditorInspectorPlugin
+    public class DictNodeVarsInspectorPlugin : EditorInspectorPlugin
     {
         private ExtendedPlugin _plugin;
 
-        public NodeVarsInspectorPlugin() { }
-        public NodeVarsInspectorPlugin(ExtendedPlugin plugin)
+        public DictNodeVarsInspectorPlugin() { }
+        public DictNodeVarsInspectorPlugin(ExtendedPlugin plugin)
         {
             _plugin = plugin;
         }
@@ -26,10 +24,10 @@ namespace Fractural.DependencyInjection
         {
             if (!(@object is Node node)) return false;
             var parser = new HintArgsParser(hintText);
-            if (parser.TryGetArgs(nameof(HintString.NodeVars), out string modeString))
+            if (parser.TryGetArgs(nameof(HintString.DictNodeVars), out string modeString))
             {
                 var objectType = node.GetCSharpType();
-                NodeVarData[] fixedNodeVars = null;
+                NodeVarData[] fixedDictNodeVars = null;
                 bool canAddNewVars = false;
 
                 //if (node.Filename != "")
@@ -37,18 +35,18 @@ namespace Fractural.DependencyInjection
                 //    var scene = ResourceLoader.Load(node.Filename);
                 //}
 
-                var mode = (HintString.NodeVarsMode)Enum.Parse(typeof(HintString.NodeVarsMode), modeString);
-                if (mode == HintString.NodeVarsMode.Attributes || mode == HintString.NodeVarsMode.LocalAttributes)
-                    fixedNodeVars = NodeVarsUtils.GetFixedNodeVarTemplates(objectType);
-                if (mode == HintString.NodeVarsMode.Local || mode == HintString.NodeVarsMode.LocalAttributes)
+                var mode = (HintString.DictNodeVarsMode)Enum.Parse(typeof(HintString.DictNodeVarsMode), modeString);
+                if (mode == HintString.DictNodeVarsMode.Attributes || mode == HintString.DictNodeVarsMode.LocalAttributes)
+                    fixedDictNodeVars = DictNodeVarsUtils.GetFixedDictNodeVarTemplates(objectType);
+                if (mode == HintString.DictNodeVarsMode.Local || mode == HintString.DictNodeVarsMode.LocalAttributes)
                     canAddNewVars = true;
 
                 AddPropertyEditor(path, new ValueEditorProperty(
-                    new NodeVarsValueProperty(
+                    new DictNodeVarsValueProperty(
                         _plugin.AssetsRegistry,
                         _plugin.GetEditorInterface().GetEditedSceneRoot(),
                         @object as Node,
-                        fixedNodeVars,
+                        fixedDictNodeVars,
                         canAddNewVars)
                     )
                 );

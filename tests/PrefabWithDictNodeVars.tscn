@@ -1,8 +1,8 @@
 [gd_scene load_steps=2 format=2]
 
-[ext_resource path="res://Tests/InheritedNodeVarsContainer.cs" type="Script" id=1]
+[ext_resource path="res://Tests/InheritedDictNodeVarsContainer.cs" type="Script" id=1]
 
-[node name="PrefabWithNodeVars" type="Node"]
+[node name="PrefabWithDictNodeVars" type="Node"]
 script = ExtResource( 1 )
 __meta__ = {
 "_nodeVars/visible": true

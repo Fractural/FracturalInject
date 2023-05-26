@@ -1,70 +1,67 @@
 [gd_scene load_steps=3 format=2]
 
-[ext_resource path="res://addons/FracturalInject/Editor/NodeVarsContainer.cs" type="Script" id=1]
-[ext_resource path="res://Tests/PrefabWithNodeVars.tscn" type="PackedScene" id=2]
+[ext_resource path="res://addons/FracturalInject/Editor/DictNodeVarsContainer.cs" type="Script" id=1]
+[ext_resource path="res://Tests/PrefabWithDictNodeVars.tscn" type="PackedScene" id=2]
 
 [node name="Node" type="Node"]
 
-[node name="NodeVarsContainer" type="Node" parent="."]
+[node name="DictNodeVarsContainer" type="Node" parent="."]
 script = ExtResource( 1 )
 __meta__ = {
 "_nodeVars/visible": true
 }
 _nodeVars = {
 "Var1": {
+"ContainerPath": NodePath("PrefabWithDictNodeVars"),
+"ContainerVarName": null,
 "Operation": 0,
-"Value": Vector2( 0, 0 ),
 "ValueType": "Godot.Vector2"
 },
 "Var2": {
+"InitialValue": true,
 "Operation": 0,
-"Value": true,
 "ValueType": "System.Boolean"
 },
 "Var3": {
+"InitialValue": 3.2349,
 "Operation": 0,
-"Value": 3.2349,
 "ValueType": "System.Single"
 },
 "Var4": {
+"InitialValue": "sdfsdfsdf",
 "Operation": 0,
-"Value": "sdfsdfsdf",
 "ValueType": "System.String"
 }
 }
-lol = null
+____lol____ = null
+____xd____ = null
 
-[node name="PrefabWithNodeVars" parent="NodeVarsContainer" instance=ExtResource( 2 )]
+[node name="PrefabWithDictNodeVars" parent="DictNodeVarsContainer" instance=ExtResource( 2 )]
 _nodeVars = {
 "MyAttributeGetVar": {
 "Operation": 0,
-"Value": false,
 "ValueType": "System.Boolean"
 },
 "MyAttributeSetVar": {
 "Operation": 1,
-"Value": true,
 "ValueType": "System.Boolean"
 },
 "MyBoolVar": {
 "Operation": 2,
-"Value": false,
 "ValueType": "System.Boolean"
 },
 "MyFloatVar": {
 "Operation": 2,
-"Value": 2.3434,
 "ValueType": "System.Single"
 },
 "MyGetVar": {
 "Operation": 1,
-"Value": true,
 "ValueType": "System.Boolean"
 },
 "MySetVar": {
 "Operation": 0,
-"Value": true,
 "ValueType": "System.Boolean"
 }
 }
-lol = null
+____lol____ = null
+____xd____ = null
