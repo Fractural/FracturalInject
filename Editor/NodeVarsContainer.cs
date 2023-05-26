@@ -97,13 +97,28 @@ namespace Fractural.DependencyInjection
             return result;
         }
 
+        public override bool _Set(string property, object value)
+        {
+            GD.Print("SETTING ", property);
+            if (property == "__lol__")
+            {
+                GD.Print("Set passed check");
+                return true;
+            }
+
+            return base._Set(property, value);
+        }
+
         public override GDC.Array _GetPropertyList()
         {
             var builder = new PropertyListBuilder();
-            builder.AddItem(
+            builder.AddNodeVarsProp(
                 name: nameof(_nodeVars),
-                type: Variant.Type.Dictionary,
-                hintString: HintString.NodeVars(Mode)
+                mode: Mode
+            );
+            builder.AddItem(
+                name: "__lol__",
+                type: Variant.Type.String
             );
             return builder.Build();
         }
