@@ -6,11 +6,11 @@ namespace Fractural.DependencyInjection
     /// Attribute to mark a property as a DictNodeVar that's settable from the inspector. Used within State nodes.
     /// </summary>
     [AttributeUsage(System.AttributeTargets.Field | System.AttributeTargets.Property | System.AttributeTargets.Method | System.AttributeTargets.Class, AllowMultiple = false)]
-    public class DictNodeVarAttribute : System.Attribute
+    public class NodeVarAttribute : System.Attribute
     {
         public NodeVarOperation? Operation { get; set; }
-        public DictNodeVarAttribute() { }
-        public DictNodeVarAttribute(NodeVarOperation operation)
+        public NodeVarAttribute() { }
+        public NodeVarAttribute(NodeVarOperation operation)
         {
             Operation = operation;
         }

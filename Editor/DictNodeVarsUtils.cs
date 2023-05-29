@@ -2,6 +2,7 @@
 using System.Reflection;
 using System.Collections.Generic;
 using Fractural.Utils;
+using Godot;
 
 namespace Fractural.DependencyInjection
 {
@@ -13,12 +14,12 @@ namespace Fractural.DependencyInjection
         /// </summary>
         /// <param name="objectType"></param>
         /// <returns></returns>
-        public static NodeVarData[] GetFixedDictNodeVarTemplates(Type objectType)
+        public static NodeVarData[] GetNodeVarsFromAttributes(Type objectType)
         {
             var fixedDictNodeVars = new List<NodeVarData>();
             foreach (var property in objectType.GetProperties())
             {
-                var attribute = property.GetCustomAttribute<DictNodeVarAttribute>();
+                var attribute = property.GetCustomAttribute<NodeVarAttribute>();
                 if (attribute == null)
                     continue;
 
@@ -58,6 +59,6 @@ namespace Fractural.DependencyInjection
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <returns></returns>
-        public static NodeVarData[] GetFixedDictNodeVars<T>() => GetFixedDictNodeVarTemplates(typeof(T));
+        public static NodeVarData[] GetFixedDictNodeVars<T>() => GetNodeVarsFromAttributes(typeof(T));
     }
 }
