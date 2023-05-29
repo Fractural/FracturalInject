@@ -110,15 +110,18 @@ namespace Fractural.DependencyInjection
             }
         }
 
-        public T InstantiatePrefab<T>(PackedScene prefab, bool deepResolve = false) where T : Node
+        public T InstantiatePrefab<T>(PackedScene prefab, int depth = 1) where T : Node
         {
             var instance = prefab.Instance();
-            ResolveNode(instance, deepResolve);
+            ResolveNode(instance, depth);
             return (T)instance;
         }
 
-        public bool ResolveNode(Node prefabInstance, bool deepResolve = false)
+        public bool ResolveNode(Node prefabInstance, int depth = 1)
         {
+            if (depth == 0)
+                return false;
+
             bool resolvedSuccess = false;
             // Try resolve Dependency nodes in the prefab
             foreach (var dependency in prefabInstance.GetNodeDependencies())
@@ -132,12 +135,11 @@ namespace Fractural.DependencyInjection
             if (resolvedSuccess)
                 return true;
 
-            if (deepResolve)
-            {
-                foreach (Node child in prefabInstance.GetChildren())
-                    if (ResolveNode(child, true))
-                        resolvedSuccess = true;
-            }
+            if (depth > 0)
+                depth--;
+            foreach (Node child in prefabInstance.GetChildren())
+                if (ResolveNode(child, depth))
+                    resolvedSuccess = true;
             return false;
         }
 
