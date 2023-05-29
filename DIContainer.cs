@@ -110,33 +110,53 @@ namespace Fractural.DependencyInjection
             }
         }
 
-        public T InstantiatePrefab<T>(PackedScene prefab) where T : Node
+        public T InstantiatePrefab<T>(PackedScene prefab, bool deepResolve = false) where T : Node
         {
             var instance = prefab.Instance();
-            ResolveNode(instance);
+            ResolveNode(instance, deepResolve);
             return (T)instance;
         }
 
-        public void ResolveNode(Node prefabInstance)
+        public bool ResolveNode(Node prefabInstance, bool deepResolve = false)
         {
+            bool resolvedSuccess = false;
             // Try resolve Dependency nodes in the prefab
             foreach (var dependency in prefabInstance.GetNodeDependencies())
+            {
                 ResolveDependencyNode(dependency);
+                resolvedSuccess = true;
+            }
 
-            ResolveObject(prefabInstance);
+            if (ResolveObject(prefabInstance))
+                resolvedSuccess = true;
+            if (resolvedSuccess)
+                return true;
+
+            if (deepResolve)
+            {
+                foreach (Node child in prefabInstance.GetChildren())
+                    if (ResolveNode(child, true))
+                        resolvedSuccess = true;
+            }
+            return false;
         }
 
-        public void ResolveObject(object instance)
+        public bool ResolveObject(object instance)
         {
             if (instance is IInjectDIContainer injectable)
+            {
                 // Try using interface injection (The node will service locate dependencies using the injected DIContainer.)
                 injectable.Construct(this);
+                return true;
+            }
             else if (instance.GetType().IsDefined(typeof(InjectAttribute), true))
             {
                 // Try reflection dependency injection on the node itself
                 ResolveObjectWithFlags(instance, BindingFlags.Public | BindingFlags.Instance);
                 ResolveObjectWithFlags(instance, BindingFlags.NonPublic | BindingFlags.Instance);
+                return true;
             }
+            return false;
         }
 
         private void ResolveObjectWithFlags(object instance, BindingFlags flags)
