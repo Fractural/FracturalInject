@@ -32,9 +32,9 @@ namespace Fractural.DependencyInjection
         /// </summary>
         public event Action<string, DictNodeVarsValuePropertyEntry> NameChanged;
         /// <summary>
-        /// DataChanged(string name, NodePath newValue)
+        /// DataChanged(string name, NodeVarData newValue)
         /// </summary>
-        public event Action<string, GDC.Dictionary> DataChanged;
+        public event Action<string, NodeVarData> DataChanged;
         /// <summary>
         /// Deleted(string name)
         /// </summary>
@@ -98,6 +98,7 @@ namespace Fractural.DependencyInjection
 
         public StringValueProperty NameProperty { get; set; }
         public NodeVarData Data { get; set; }
+        public object DefaultInitialValue { get; set; }
 
         private PopupSearch _containerVarPopupSearch;
         private Button _containerVarSelectButton;
@@ -112,6 +113,7 @@ namespace Fractural.DependencyInjection
         private OperationTypeData[] _operationTypes;
         private Node _relativeToNode;
         private IAssetsRegistry _assetsRegistry;
+        private Button _resetInitalValueButton;
 
         public DictNodeVarsValuePropertyEntry() { }
         public DictNodeVarsValuePropertyEntry(IAssetsRegistry assetsRegistry, Node sceneRoot, Node relativeToNode)
@@ -151,7 +153,7 @@ namespace Fractural.DependencyInjection
             _valuePropertyContainer = new MarginContainer();
             _valuePropertyContainer.SizeFlagsHorizontal = (int)SizeFlags.ExpandFill;
 
-            _containerPathProperty = new NodePathValueProperty(sceneRoot, (node) => node is IDictNodeVarsContainer);
+            _containerPathProperty = new NodePathValueProperty(sceneRoot, (node) => node is INodeVarsContainer);
             _containerPathProperty.ValueChanged += OnNodePathChanged;
             _containerPathProperty.SizeFlagsHorizontal = (int)SizeFlags.ExpandFill;
             _containerPathProperty.RelativeToNode = relativeToNode;
@@ -174,6 +176,9 @@ namespace Fractural.DependencyInjection
             _deleteButton = new Button();
             _deleteButton.Connect("pressed", this, nameof(OnDeletePressed));
 
+            _resetInitalValueButton = new Button();
+            _resetInitalValueButton.Connect("pressed", this, nameof(OnResetButtonPressed));
+
             AddChild(_containerVarPopupSearch);
 
             firstRowHBox.AddChild(NameProperty);
@@ -189,6 +194,7 @@ namespace Fractural.DependencyInjection
             secondRowHBox.AddChild(_containerPathProperty);
             secondRowHBox.AddChild(_containerVarSelectButton);
             secondRowHBox.AddChild(_valuePropertyContainer);
+            secondRowHBox.AddChild(_resetInitalValueButton);
             secondRowHBox.AddChild(_deleteButton);
         }
 
@@ -200,6 +206,7 @@ namespace Fractural.DependencyInjection
 #endif
             _deleteButton.Icon = GetIcon("Remove", "EditorIcons");
             _isPointerButton.Icon = GetIcon("GuiScrollArrowRightHl", "EditorIcons");
+            _resetInitalValueButton.Icon = GetIcon("Reload", "EditorIcons");
 
             InitValueTypes();
             InitOperationTypes();
@@ -226,6 +233,14 @@ namespace Fractural.DependencyInjection
             _deleteButton.Disabled = _disabled;
         }
 
+        private void OnResetButtonPressed()
+        {
+            Data.InitialValue = DefaultInitialValue;
+            _valueProperty.SetValue(Data.InitialValue, false);
+            UpdateResetButton();
+            InvokeDataChanged();
+        }
+
         private void OnContainerVarNameSelected(string name)
         {
             Data.ContainerVarName = name;
@@ -248,27 +263,30 @@ namespace Fractural.DependencyInjection
             _operationButton.Select(operationTypeData.Index);
         }
 
-        public void SetData(NodeVarData value)
+        public void SetData(NodeVarData value, object defaultInitialValue = null)
         {
             var oldData = Data;
-            Data = value;
+            // Clone the data
+            Data = value.Clone();
+            DefaultInitialValue = defaultInitialValue;
 
-            if ((oldData == null && value != null) || (oldData != null && oldData.ValueType != Data.ValueType))
+            if ((oldData == null && Data != null) || (oldData != null && oldData.ValueType != Data.ValueType))
                 UpdateValuePropertyType();
 
-            SetValueTypeValueDisplay(value.ValueType);
-            SetOperationsValueDisplay(value.Operation);
-            NameProperty.SetValue(value.Name);
-            _valueProperty.SetValue(value.InitialValue, false);
-            _containerPathProperty.SetValue(value.ContainerPath, false);
+            SetValueTypeValueDisplay(Data.ValueType);
+            SetOperationsValueDisplay(Data.Operation);
+            NameProperty.SetValue(Data.Name);
+            _valueProperty.SetValue(Data.InitialValue, false);
+            _containerPathProperty.SetValue(Data.ContainerPath, false);
             _containerVarSelectButton.Text = Data.ContainerVarName ?? "[Empty]";
             _isPointerButton.SetPressedNoSignal(Data.IsPointer);
             UpdateIsPointerVisibility();
+            UpdateResetButton();
         }
 
         private void UpdateIsPointerVisibility()
         {
-            var containerNode = _relativeToNode.GetNodeOrNull(Data?.ContainerPath ?? new NodePath()) as IDictNodeVarsContainer;
+            var containerNode = _relativeToNode.GetNodeOrNull(Data?.ContainerPath ?? new NodePath()) as INodeVarsContainer;
             _containerPathProperty.Visible = Data.IsPointer;
             _containerVarSelectButton.Visible = Data.IsPointer;
             _containerVarSelectButton.Disabled = containerNode == null;
@@ -286,9 +304,16 @@ namespace Fractural.DependencyInjection
             _valueProperty.ValueChanged += (newValue) =>
             {
                 Data.InitialValue = newValue;
+                UpdateResetButton();
                 InvokeDataChanged();
             };
+            _valueProperty.SetValue(Data.InitialValue, false);
             _valuePropertyContainer.AddChild(_valueProperty);
+        }
+
+        private void UpdateResetButton()
+        {
+            _resetInitalValueButton.Visible = DefaultInitialValue != null && !Equals(Data.InitialValue, DefaultInitialValue);
         }
 
         private void InitOperationTypes()
@@ -364,7 +389,7 @@ namespace Fractural.DependencyInjection
             }
         }
 
-        private void InvokeDataChanged() => DataChanged?.Invoke(Data.Name, Data.ToGDDict());
+        private void InvokeDataChanged() => DataChanged?.Invoke(Data.Name, Data);
 
         private void OnNameChanged(string newName)
         {
@@ -420,7 +445,7 @@ namespace Fractural.DependencyInjection
 
         private void OnContainerVarSelectPressed()
         {
-            var container = _relativeToNode.GetNode<IDictNodeVarsContainer>(Data.ContainerPath);
+            var container = _relativeToNode.GetNode<INodeVarsContainer>(Data.ContainerPath);
             _containerVarPopupSearch.SearchEntries = container.GetDictNodeVarsList().Select(x => x.Name).ToArray();
             _containerVarPopupSearch.Popup_(_containerVarSelectButton.GetGlobalRect());
         }

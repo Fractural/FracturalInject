@@ -1,0 +1,39 @@
+[gd_scene load_steps=3 format=2]
+
+[ext_resource path="res://addons/FracturalInject/Editor/DictNodeVarsContainer.cs" type="Script" id=1]
+[ext_resource path="res://Tests/TestDictNodeVars/PrefabWithDictNodeVars.tscn" type="PackedScene" id=2]
+
+[node name="Node" type="Node"]
+
+[node name="DictNodeVarsContainer" type="Node" parent="."]
+script = ExtResource( 1 )
+__meta__ = {
+"_nodeVars/visible": true
+}
+Mode = 0
+_nodeVars = {
+"Var1": {
+"InitialValue": 0,
+"Operation": 0,
+"ValueType": "System.Int32"
+},
+"Var2": {
+"InitialValue": false,
+"Operation": 0,
+"ValueType": "System.Boolean"
+},
+"Var3": {
+"InitialValue": "0sdfsdf",
+"Operation": 0,
+"ValueType": "System.String"
+}
+}
+
+[node name="PrefabWithDictNodeVars" parent="DictNodeVarsContainer" instance=ExtResource( 2 )]
+_nodeVars = {
+"MyBoolVar": {
+"InitialValue": true,
+"Operation": 2,
+"ValueType": "System.Boolean"
+}
+}

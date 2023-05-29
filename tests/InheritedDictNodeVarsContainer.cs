@@ -14,40 +14,40 @@ namespace Tests
         [Export]
         public GDC.Array SomeArray { get; set; }
 
-        [DictNodeVar]
+        [NodeVar]
         public float MyFloatVar
         {
             get => GetDictNodeVar<float>(nameof(MyFloatVar));
             set => SetDictNodeVar(nameof(MyFloatVar), value);
         }
 
-        [DictNodeVar]
+        [NodeVar]
         public bool MyBoolVar
         {
             get => GetDictNodeVar<bool>(nameof(MyBoolVar));
             set => SetDictNodeVar(nameof(MyBoolVar), value);
         }
 
-        [DictNodeVar]
+        [NodeVar]
         public bool MySetVar
         {
             set => SetDictNodeVar(nameof(MySetVar), value);
         }
 
-        [DictNodeVar]
+        [NodeVar]
         public bool MyGetVar
         {
             get => GetDictNodeVar<bool>(nameof(MyGetVar));
         }
 
-        [DictNodeVar(NodeVarOperation.Set)]
+        [NodeVar(NodeVarOperation.Set)]
         public bool MyAttributeSetVar
         {
             get => GetDictNodeVar<bool>(nameof(MyAttributeSetVar));
             set => SetDictNodeVar(nameof(MyAttributeSetVar), value);
         }
 
-        [DictNodeVar(NodeVarOperation.Get)]
+        [NodeVar(NodeVarOperation.Get)]
         public bool MyAttributeGetVar
         {
             get => GetDictNodeVar<bool>(nameof(MyAttributeGetVar));

@@ -164,7 +164,6 @@ namespace Fractural.DependencyInjection
         public void ResolveDependencyNode(Dependency dependency)
         {
             dependency.DependencyValue = Resolve(dependency.ClassTypeRes.ClassType);
-            GD.Print($"resolving class type for node: {dependency.ClassTypeRes.ClassType} result: {dependency.DependencyValue}");
         }
 
         public BindingBuilder Bind(Type type)

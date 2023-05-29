@@ -37,10 +37,12 @@ namespace Fractural.DependencyInjection
         private VBoxContainer _keyValueEntriesVBox;
         private Node _sceneRoot;
         private Node _relativeToNode;
-        private Dictionary<string, NodeVarData> _fixedDictNodeVarTemplatesDict;
+        private Dictionary<string, NodeVarData> _fixedNodeVarsDict;
+        private Dictionary<string, NodeVarData> _defaultNodeVarsDict;
 
         private string EditButtonText => $"DictNodeVars [{Value.Count}]";
-        private bool HasFixedDictNodeVars => _fixedDictNodeVarTemplatesDict != null;
+        private bool HasFixedNodeVars => _fixedNodeVarsDict != null;
+        private bool HasDefaultNodeVars => _defaultNodeVarsDict != null;
         private bool _canAddNewVars;
         private IAssetsRegistry _assetsRegistry;
 
@@ -49,18 +51,34 @@ namespace Fractural.DependencyInjection
             IAssetsRegistry assetsRegistry,
             Node sceneRoot,
             Node relativeToNode,
-            NodeVarData[] fixedDictNodeVarTemplates = null,
+            NodeVarData[] localFixedNodeVars = null,
+            NodeVarData[] defaultNodeVars = null,
             bool canAddNewVars = true
         ) : base()
         {
             _assetsRegistry = assetsRegistry;
             _sceneRoot = sceneRoot;
             _relativeToNode = relativeToNode;
-            if (fixedDictNodeVarTemplates != null)
+            if (localFixedNodeVars != null && localFixedNodeVars.Length > 0)
             {
-                _fixedDictNodeVarTemplatesDict = new Dictionary<string, NodeVarData>();
-                foreach (var fixedDictNodeVar in fixedDictNodeVarTemplates)
-                    _fixedDictNodeVarTemplatesDict.Add(fixedDictNodeVar.Name, fixedDictNodeVar);
+                // fixedNodeVars are NodeVars that should be shown, but not actually saved unless they've changed.
+                // This can include
+                // - Default node vars values inherited from the PackedScene that the node was an instance of
+                // - NodeVar attributes on some of the Node's properties
+                _fixedNodeVarsDict = new Dictionary<string, NodeVarData>();
+                foreach (var nodeVar in localFixedNodeVars)
+                    _fixedNodeVarsDict.Add(nodeVar.Name, nodeVar);
+            }
+            if (defaultNodeVars != null && defaultNodeVars.Length > 0)
+            {
+                if (_fixedNodeVarsDict == null)
+                    _fixedNodeVarsDict = new Dictionary<string, NodeVarData>();
+                _defaultNodeVarsDict = new Dictionary<string, NodeVarData>();
+                foreach (var nodeVar in defaultNodeVars)
+                {
+                    _fixedNodeVarsDict.Add(nodeVar.Name, nodeVar);
+                    _defaultNodeVarsDict.Add(nodeVar.Name, nodeVar);
+                }
             }
             _canAddNewVars = canAddNewVars;
 
@@ -109,25 +127,46 @@ namespace Fractural.DependencyInjection
         private Control _currentFocused;
         private void OnFocusChanged(Control control) => _currentFocused = control;
 
+        private bool IsValueDefault()
+        {
+            if (_defaultNodeVarsDict == null)
+                return false;
+            if (Value.Count != _defaultNodeVarsDict.Count)
+                return false;
+            foreach (string key in Value.Keys)
+            {
+                var itemNodeVar = NodeVarData.FromGDDict(Value.Get<GDC.Dictionary>(key), key);
+                if (_defaultNodeVarsDict.TryGetValue(key, out NodeVarData defaultNodeVar) && !itemNodeVar.Equals(defaultNodeVar))
+                    return false;
+            }
+            return true;
+        }
+
         public override void UpdateProperty()
         {
-            if (Value == null)
+            if (Value == null || IsValueDefault())
                 Value = new GDC.Dictionary();
 
-            if (HasFixedDictNodeVars)
+            var displayedNodeVars = new Dictionary<string, NodeVarData>();
+            foreach (string key in Value.Keys)
+                displayedNodeVars.Add(key, NodeVarData.FromGDDict(Value.Get<GDC.Dictionary>(key), key));
+
+            if (HasFixedNodeVars)
             {
-                // Popupulate Value with any _fixedDictNodeVars that it is missing
-                foreach (var entry in _fixedDictNodeVarTemplatesDict.Values)
+                // Popupulate Value with any _fixedNodeVars that it is missing
+                foreach (var fixedNodeVar in _fixedNodeVarsDict.Values)
                 {
-                    if (Value.Contains(entry.Name))
+                    var displayNodeVar = fixedNodeVar;
+                    if (displayedNodeVars.TryGetValue(fixedNodeVar.Name, out NodeVarData existingNodeVar))
                     {
-                        // Try to copy over the value from the existing entry if it exists
-                        var existingEntry = NodeVarData.FromGDDict(Value.Get<GDC.Dictionary>(entry.Name), entry.Name);
-                        if (existingEntry.ValueType == entry.ValueType)
-                            entry.InitialValue = existingEntry.InitialValue;
+                        if (existingNodeVar.ValueType == fixedNodeVar.ValueType)
+                            displayNodeVar = fixedNodeVar.WithChanges(existingNodeVar);
+                        else
+                            // If the exiting entry's type is different from the fixed entry, then we must purge
+                            // the existing entry to ensure the saved entries are always consistent with the fixed entries
+                            Value.Remove(existingNodeVar.Name);
                     }
-                    // Value dict does not contain an entry in _fixedDictNodeVars, so we add it to Value dict
-                    Value[entry.Name] = entry.ToGDDict();
+                    displayedNodeVars[fixedNodeVar.Name] = displayNodeVar;
                 }
                 if (!_canAddNewVars)
                 {
@@ -135,7 +174,7 @@ namespace Fractural.DependencyInjection
                     // must only contain fixed node vars
                     foreach (string key in Value.Keys)
                     {
-                        if (_fixedDictNodeVarTemplatesDict.ContainsKey(key))
+                        if (_fixedNodeVarsDict.ContainsKey(key))
                             continue;
                         var entry = NodeVarData.FromGDDict(Value.Get<GDC.Dictionary>(key), key);
                         // _fixedDictNodeVars doesn't contain an entry in Value dict, so we remove it from Value dict
@@ -148,8 +187,19 @@ namespace Fractural.DependencyInjection
             _editButton.Pressed = _container.Visible;
             _editButton.Text = EditButtonText;
 
-            int index = 0;
-            int childCount = _keyValueEntriesVBox.GetChildCount();
+            var sortedDisplayNodeVars = new List<NodeVarData>(displayedNodeVars.Values);
+            sortedDisplayNodeVars.Sort((a, b) =>
+            {
+                if (_fixedNodeVarsDict != null)
+                {
+                    // Sort by whether it's fixed, and then by alphabetical order
+                    int fixedOrdering = _fixedNodeVarsDict.ContainsKey(b.Name).CompareTo(_fixedNodeVarsDict.ContainsKey(a.Name));
+                    if (fixedOrdering == 0)
+                        return a.Name.CompareTo(b.Name);
+                    return fixedOrdering;
+                }
+                return a.Name.CompareTo(b.Name);
+            });
 
             // Move the current focused entry into it's Value dict index inside the entries vBox.
             // We don't want to just overwrite the current focused entry since that would
@@ -158,14 +208,8 @@ namespace Fractural.DependencyInjection
             if (currFocusedEntry != null)
             {
                 // Find the new index of the current focused entry within the Value dictionary.
-                int keyIndex = 0;
-                foreach (var key in Value.Keys)
-                {
-                    if (key != null && key.Equals(currFocusedEntry.Data.Name))
-                        break;
-                    keyIndex++;
-                }
-                if (keyIndex == Value.Keys.Count)
+                int keyIndex = sortedDisplayNodeVars.FindIndex(x => x.Name == currFocusedEntry.Data.Name);
+                if (keyIndex < 0)
                 {
                     // Set current focused entry back to null. We couldn't
                     // find the current focused entry in the new dictionary, meaning
@@ -182,7 +226,9 @@ namespace Fractural.DependencyInjection
             }
 
             // Set the data of each entry with the corresponding values from the Value dictionary
-            foreach (string key in Value.Keys)
+            int index = 0;
+            int childCount = _keyValueEntriesVBox.GetChildCount();
+            foreach (NodeVarData nodeVar in sortedDisplayNodeVars)
             {
                 DictNodeVarsValuePropertyEntry entry;
                 if (index >= childCount)
@@ -191,10 +237,10 @@ namespace Fractural.DependencyInjection
                     entry = _keyValueEntriesVBox.GetChild<DictNodeVarsValuePropertyEntry>(index);
 
                 if (currFocusedEntry == null || entry != currFocusedEntry)
-                    entry.SetData(NodeVarData.FromGDDict(Value.Get<GDC.Dictionary>(key), key));
-                if (HasFixedDictNodeVars)
+                    entry.SetData(nodeVar, _fixedNodeVarsDict?.GetValue(nodeVar.Name, null)?.InitialValue);
+                if (HasFixedNodeVars)
                 {
-                    var isFixed = _fixedDictNodeVarTemplatesDict.ContainsKey(key);
+                    var isFixed = _fixedNodeVarsDict.ContainsKey(nodeVar.Name);
                     entry.NameEditable = !isFixed;
                     entry.ValueTypeEditable = !isFixed;
                     entry.OperationEditable = !isFixed;
@@ -261,10 +307,16 @@ namespace Fractural.DependencyInjection
             InvokeValueChanged(Value);
         }
 
-        private void OnEntryDataChanged(object key, object newValue)
+        private void OnEntryDataChanged(string key, NodeVarData newValue)
         {
-            GD.Print("data changed, invoking value changed");
-            Value[key] = newValue;
+            // Remove entry if it is the same as the default value (no point in storing redundant information)
+            if (HasFixedNodeVars && _fixedNodeVarsDict.TryGetValue(key, out NodeVarData existingDefaultValue) && (
+                    (existingDefaultValue.InitialValue == null && newValue.InitialValue == null) ||
+                    (existingDefaultValue.InitialValue?.Equals(newValue.InitialValue) ?? false)
+                ))
+                Value.Remove(key);
+            else
+                Value[key] = newValue.ToGDDict();
             InvokeValueChanged(Value);
         }
 
@@ -312,7 +364,7 @@ namespace Fractural.DependencyInjection
 
         public void OnBeforeSerialize()
         {
-            _fixedDictNodeVarTemplatesDict = null;
+            _fixedNodeVarsDict = null;
         }
 
         public void OnAfterDeserialize() { }

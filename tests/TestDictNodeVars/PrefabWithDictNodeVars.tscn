@@ -13,35 +13,20 @@ SomeDictionary = {
 }
 SomeArray = [  ]
 _nodeVars = {
-"MyAttributeGetVar": {
+"MyCoolVar": {
+"InitialValue": 1030,
 "Operation": 0,
-"Value": false,
-"ValueType": "System.Boolean"
+"ValueType": "System.Int32"
 },
-"MyAttributeSetVar": {
+"MyOtherCoolVar": {
+"InitialValue": Vector2( 0, 1.3 ),
 "Operation": 1,
-"Value": true,
-"ValueType": "System.Boolean"
+"ValueType": "Godot.Vector2"
 },
-"MyBoolVar": {
-"Operation": 2,
-"Value": false,
-"ValueType": "System.Boolean"
-},
-"MyFloatVar": {
-"Operation": 2,
-"Value": 23.23,
-"ValueType": "System.Single"
-},
-"MyGetVar": {
-"Operation": 1,
-"Value": true,
-"ValueType": "System.Boolean"
-},
-"MySetVar": {
+"Var1": {
+"InitialValue": Vector2( 0, 3.4 ),
 "Operation": 0,
-"Value": true,
-"ValueType": "System.Boolean"
+"ValueType": "Godot.Vector2"
 }
 }
 
