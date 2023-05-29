@@ -1,9 +1,7 @@
-[gd_scene load_steps=5 format=2]
+[gd_scene load_steps=3 format=2]
 
 [ext_resource path="res://addons/FracturalInject/Dependency.cs" type="Script" id=1]
-[ext_resource path="res://addons/FracturalInject/Editor/DictNodeVarsContainer.cs" type="Script" id=2]
 [ext_resource path="res://ClassTypes/NodeClassType.tres" type="Resource" id=3]
-[ext_resource path="res://tests/InheritedDictNodeVarsContainer.cs" type="Script" id=4]
 
 [node name="Node2D" type="Node2D"]
 
@@ -25,88 +23,3 @@ DependencyPath = NodePath("")
 script = ExtResource( 1 )
 ClassType = null
 DependencyPath = NodePath("")
-
-[node name="DictNodeVarsContainer" type="Node" parent="."]
-script = ExtResource( 2 )
-__meta__ = {
-"_nodeVars/visible": true
-}
-_nodeVars = {
-"Cool var": {
-"InitialValue": Vector3( 3.34, 234.34, 434 ),
-"Operation": 2,
-"ValueType": "Godot.Vector3"
-},
-"Var1": {
-"ContainerPath": NodePath(""),
-"ContainerVarName": null,
-"InitialValue": true,
-"Operation": 0,
-"ValueType": "System.Boolean"
-},
-"Var2": {
-"InitialValue": 0,
-"Operation": 0,
-"ValueType": "System.Int32"
-}
-}
-
-[node name="OtherContainer" type="Node" parent="DictNodeVarsContainer"]
-script = ExtResource( 2 )
-__meta__ = {
-"_nodeVars/visible": true
-}
-Mode = 1
-_nodeVars = {
-}
-
-[node name="Node" type="Node" parent="."]
-script = ExtResource( 4 )
-__meta__ = {
-"_nodeVars/visible": true
-}
-SomeDictionary = {
-}
-SomeArray = [  ]
-_nodeVars = {
-"MyAttributeGetVar": {
-"InitialValue": true,
-"Operation": 0,
-"ValueType": "System.Boolean"
-},
-"MyAttributeSetVar": {
-"InitialValue": true,
-"Operation": 1,
-"ValueType": "System.Boolean"
-},
-"MyBoolVar": {
-"InitialValue": true,
-"Operation": 2,
-"ValueType": "System.Boolean"
-},
-"MyFloatVar": {
-"InitialValue": 0.0,
-"Operation": 2,
-"ValueType": "System.Single"
-},
-"MyGetVar": {
-"InitialValue": true,
-"Operation": 1,
-"ValueType": "System.Boolean"
-},
-"MySetVar": {
-"InitialValue": true,
-"Operation": 0,
-"ValueType": "System.Boolean"
-},
-"OtherVar1": {
-"InitialValue": 0,
-"Operation": 0,
-"ValueType": "System.Int32"
-},
-"Var2": {
-"InitialValue": 0,
-"Operation": 0,
-"ValueType": "System.Int32"
-}
-}

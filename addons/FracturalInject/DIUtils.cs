@@ -19,7 +19,6 @@ namespace Fractural.DependencyInjection
 
         public static Dependency[] GetNodeDependencies(this Node node)
         {
-
             var dependencies = new List<Dependency>();
             var dependenciesHolder = node.GetNodeDependencyHolder();
             if (dependenciesHolder != null)
