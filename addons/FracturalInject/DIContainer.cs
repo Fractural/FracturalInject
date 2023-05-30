@@ -110,11 +110,11 @@ namespace Fractural.DependencyInjection
             }
         }
 
-        public T InstantiatePrefab<T>(PackedScene prefab, int depth = 1) where T : Node
+        public T InstantiatePrefab<T>(PackedScene prefab, int depth = 1) where T : class
         {
             var instance = prefab.Instance();
             ResolveNode(instance, depth);
-            return (T)instance;
+            return (T)(object)instance;
         }
 
         public bool ResolveNode(Node prefabInstance, int depth = 1)
