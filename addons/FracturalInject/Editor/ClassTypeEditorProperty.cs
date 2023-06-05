@@ -1,9 +1,6 @@
 ﻿using Fractural.Plugin;
 using Fractural.Utils;
 using Godot;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 
 #if TOOLS
 namespace Fractural.DependencyInjection
@@ -58,7 +55,7 @@ namespace Fractural.DependencyInjection
 
         private void OnSelectButtonPressed()
         {
-            _popupSearch.SearchEntries = _inspectorPlugin.NodeClassTypesDict.Keys.ToArray();
+            _popupSearch.SearchEntries = SearchEntry.ArrayFromStringEnumerable(_inspectorPlugin.NodeClassTypesDict.Keys);
             _popupSearch.Popup_(_selectButton.GetGlobalRect());
         }
 
