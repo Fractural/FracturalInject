@@ -8,7 +8,7 @@ using System.Linq;
 #if TOOLS
 namespace Fractural.DependencyInjection
 {
-    public class ClassTypeInspectorPlugin : EditorInspectorPlugin, IManagedUnload
+    public class ClassTypeInspectorPlugin : EditorInspectorPlugin, IManagedUnload, ISerializationListener
     {
         public string ClassTypesDirectory = "res://ClassTypes";
         public Dictionary<string, IClassTypeRes> ClassTypeResourcesDict { get; set; }
@@ -34,12 +34,19 @@ namespace Fractural.DependencyInjection
             UpdateResources();
         }
 
+
+        public void OnBeforeSerialize()
+        {
+            ClassTypeResourcesDict = null;
+            NodeClassTypesDict = null;
+        }
+
+        public void OnAfterDeserialize() { }
+
         public void Unload()
         {
             _plugin.GetEditorInterface().GetResourceFilesystem().Disconnect("filesystem_changed", this, nameof(UpdateResources));
             _confirmCreateClassTypeResourceDialog.QueueFree();
-            ClassTypeResourcesDict = null;
-            NodeClassTypesDict = null;
         }
 
         public override bool CanHandle(Godot.Object @object)
